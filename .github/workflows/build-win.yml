@@ -5,35 +5,36 @@ on:
 
 jobs:
   build-windows:
+    name: Build for Windows
     runs-on: windows-latest
-    steps:
-      - name: Klonowanie repozytorium z GitLab
-        run: |
-          if (Test-Path tomos) { Remove-Item tomos -Recurse -Force }
-          git clone https://gitlab.com/gnejusz_pompejusz/tomos.git tomos
-        shell: pwsh
 
-      - name: Instalacja Flutter SDK
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: 'stable'
+          channel: 'stable'
 
-      - name: Pobieranie zależności Flutter
-        working-directory: tomos
+      - name: Clone repo from GitLab
+        run: git clone https://gitlab.com/gnejusz_pompejusz/tomos.git
+
+      - name: Install dependencies
         run: flutter pub get
-
-      - name: Włączanie wsparcia dla Windows desktop
         working-directory: tomos
-        run: flutter config --enable-windows-desktop
 
-      - name: Kompilacja aplikacji dla Windows
+      - name: Build Windows Release
+        run: flutter build windows --release --verbose
         working-directory: tomos
-        run: |
-          flutter clean
-          flutter build windows --release
 
-      - name: Przesyłanie artefaktu
+      - name: Zobacz co zostało zbudowane (debug)
+        run: Get-ChildItem -Recurse tomos/build/
+        shell: pwsh
+
+      - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: tomos-windows
-          path: tomos\build\windows\runner\Release\
+          path: tomos/build/windows/**/*.exe
