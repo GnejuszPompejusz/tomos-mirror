@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tomos-windows
-          path: tomos/build/windows/**/*.exe
+          path: tomos\build\windows\x64\runner\Release\*
