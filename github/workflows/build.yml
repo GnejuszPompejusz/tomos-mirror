@@ -1,0 +1,80 @@
+name: Flutter CI (Linux & Windows)
+
+# Uruchamianie ręczne
+on:
+  workflow_dispatch:
+
+  jobs:
+    build-linux:
+        name: Build Linux
+            # Używamy gotowego kontenera z Flutterem i wszystkimi zależnościami
+                runs-on: ubuntu-latest
+                    container:
+                          image: cirrusci/flutter:stable
+                              steps:
+                                    - name: Checkout this workflow repo
+                                            uses: actions/checkout@v4
+
+                                                  - name: Clone remote GitLab repo
+                                                          run: |
+                                                                    rm -rf tomos
+                                                                              git clone https://gitlab.com/gnejusz_pompejusz/tomos.git tomos
+                                                                                        cd tomos
+
+                                                                                              - name: Get Flutter packages
+                                                                                                      working-directory: tomos
+                                                                                                              run: flutter pub get
+
+                                                                                                                    - name: Enable Linux desktop
+                                                                                                                            working-directory: tomos
+                                                                                                                                    run: flutter config --enable-linux-desktop
+
+                                                                                                                                          - name: Build for Linux
+                                                                                                                                                  working-directory: tomos
+                                                                                                                                                          run: |
+                                                                                                                                                                    flutter clean
+                                                                                                                                                                              flutter build linux --release
+
+                                                                                                                                                                                    - name: Upload Linux artifact
+                                                                                                                                                                                            uses: actions/upload-artifact@v3
+                                                                                                                                                                                                    with:
+                                                                                                                                                                                                              name: tomos-linux
+                                                                                                                                                                                                                        path: tomos/build/linux/release/bundle/
+
+                                                                                                                                                                                                                          build-windows:
+                                                                                                                                                                                                                              name: Build Windows
+                                                                                                                                                                                                                                  runs-on: windows-latest
+                                                                                                                                                                                                                                      steps:
+                                                                                                                                                                                                                                            - name: Checkout this workflow repo
+                                                                                                                                                                                                                                                    uses: actions/checkout@v4
+
+                                                                                                                                                                                                                                                          - name: Clone remote GitLab repo
+                                                                                                                                                                                                                                                                  run: |
+                                                                                                                                                                                                                                                                            if (Test-Path tomos) { Remove-Item tomos -Recurse -Force }
+                                                                                                                                                                                                                                                                                      git clone https://gitlab.com/gnejusz_pompejusz/tomos.git tomos
+                                                                                                                                                                                                                                                                                              shell: pwsh
+
+                                                                                                                                                                                                                                                                                                    - name: Setup Flutter SDK
+                                                                                                                                                                                                                                                                                                            uses: subosito/flutter-action@v2
+                                                                                                                                                                                                                                                                                                                    with:
+                                                                                                                                                                                                                                                                                                                              channel: 'stable'
+
+                                                                                                                                                                                                                                                                                                                                    - name: Get Flutter packages
+                                                                                                                                                                                                                                                                                                                                            working-directory: tomos
+                                                                                                                                                                                                                                                                                                                                                    run: flutter pub get
+
+                                                                                                                                                                                                                                                                                                                                                          - name: Enable Windows desktop
+                                                                                                                                                                                                                                                                                                                                                                  working-directory: tomos
+                                                                                                                                                                                                                                                                                                                                                                          run: flutter config --enable-windows-desktop
+
+                                                                                                                                                                                                                                                                                                                                                                                - name: Build for Windows
+                                                                                                                                                                                                                                                                                                                                                                                        working-directory: tomos
+                                                                                                                                                                                                                                                                                                                                                                                                run: |
+                                                                                                                                                                                                                                                                                                                                                                                                          flutter clean
+                                                                                                                                                                                                                                                                                                                                                                                                                    flutter build windows --release
+
+                                                                                                                                                                                                                                                                                                                                                                                                                          - name: Upload Windows artifact
+                                                                                                                                                                                                                                                                                                                                                                                                                                  uses: actions/upload-artifact@v3
+                                                                                                                                                                                                                                                                                                                                                                                                                                          with:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    name: tomos-windows
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              path: tomos\build\windows\runner\Release\
