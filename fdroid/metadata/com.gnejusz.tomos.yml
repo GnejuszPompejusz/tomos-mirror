@@ -1,0 +1,40 @@
+RepoType: git
+Repo: https://gitlab.com/gnejusz_pompejusz/tomos.git
+
+# Dla lokalnych testów na checkout z GitHub: zakomentuj powyższe dwie linie
+# Wtedy fdroid build użyje bieżącego katalogu (bez pobierania z remote – szybsze testy)
+
+Categories:
+  - Education
+
+License: MIT
+
+AuthorName: Gnejusz Pompejusz
+AuthorEmail: ""  # opcjonalnie dodaj, jeśli chcesz publiczny email
+
+WebSite: ""  # brak dedykowanej strony – możesz dodać później
+SourceCode: https://gitlab.com/gnejusz_pompejusz/tomos
+IssueTracker: https://gitlab.com/gnejusz_pompejusz/tomos/-/issues
+
+AutoName: Tomos
+Summary: Nieoficjalny klient Librus Synergia w stylu filozoficznego zwoju
+
+Description: |
+  In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, *Tomos* emerges as a humble yet defiant tool. Crafted in the spirit of ancient Greece, where Socrates teased truths from the ignorant and Diogenes mocked the pompous with his lantern, *Tomos* dares to bring clarity to the bureaucratic labyrinth of grades, messages, and school decrees. Heavily inspired by de la noble [librusek](https://github.com/SimonB50/librusek/) — a creation tailored chiefly for the nimble hands of students — *Tomos* extends its reach to the watchful eyes of parents, offering them the same unclouded view into the scholastic machinery.  
+
+  Yet let it be proclaimed in the marketplace of ideas: *Tomos* is an **unofficial** creation, bearing no affiliation with the Librus company, and owing its existence solely to the curiosity and craft of independent minds. As of now, it is a work in progress — a vessel still leaking in places, with many a bug lurking in its timbers — but one that sails boldly toward the horizon, guided by the sturdy pillars of the [**Synergic**](https://gitlab.com/gnejusz_pompejusz/synergic) library, ever evolving like Plato’s eternal Forms, perfect in idea if not yet in execution.
+
+  Forged in the fires of **Flutter**, that cross-platform muse of developers, *Tomos* dances across devices with the grace of Terpsichore, delivering its wisdom to Android, iOS, and the web. Tested on Android and Windows, it strides confidently on these platforms, while its web incarnation, though possible, requires the brave to tame the hydra of CORS (Cross-Origin Resource Sharing). Like Zeno’s arrow, it moves forward in paradoxical increments, its full potential tantalizingly close yet tethered to the mortal coil of code.
+
+  Features: The Labors of Tomos
+
+  *Tomos* strides boldly into the fray of Librus Synergia, wielding the following powers, each a nod to the philosophical musings of antiquity:
+
+  - **User Management with Avatars**: In the spirit of Aristotle’s Lyceum, *Tomos* supports **multiple user accounts**, each adorned with a custom avatar, like the busts of great thinkers in a scholar’s hall. Parents, students, and teachers can log in, their profiles managed with the efficiency of a Spartan phalanx.
+  - **Messaging (Snippets and Details)**: Like the epistles of Epicurus, *Tomos* fetches **message snippets** and **full details** from the Synergic API, displaying them with tested reliability. Responding to messages is a proven feat, though sending new ones remains an uncharted odyssey—its success a riddle for future scribes.
+  - **School and Student Information**: With the precision of Euclid’s geometry, *Tomos* unveils the sacred scrolls of **school announcements** and **student records**. Grades, attendance, and teacher remarks are laid bare, as if Athena herself had cataloged them.
+  - **State Management with Riverpod**: Built upon the stable foundation of **Riverpod**, *Tomos* manages its state with the wisdom of a Stoic, ensuring seamless transitions and robust data handling across its features.
+  - **Auto-Login**: Like the automatons of Hephaestus, *Tomos* offers **auto-login** for swift access to the digital agora, sparing users the Sisyphean task of repeated credential entry.
+
+# Builds dodawane automatycznie przez workflow (nie edytuj ręcznie)
+# AllowedAPKSigningKeys dodane jednorazowo przez workflow
