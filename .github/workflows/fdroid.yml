@@ -21,7 +21,7 @@ jobs:
   fdroid:
     runs-on: ubuntu-latest
     env:
-      APPID: com.example.tomos   # ⚠️ ZMIEŃ NA RZECZYWISTY PACKAGE NAME Z android/app/build.gradle
+      APPID: com.gnejusz.tomos   # ⚠️ ZMIEŃ NA RZECZYWISTY PACKAGE NAME Z android/app/build.gradle
       FLUTTER_VERSION: ${{ inputs.flutterVersion || '3.38.5' }}
 
     steps:
