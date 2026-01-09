@@ -118,7 +118,7 @@ jobs:
             cat <<EOF >> "$METADATA"
 
           AllowedAPKSigningKeys:
-            - SHA256:TWÓJ_SHA256_TUTAJ
+            - SHA256:1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
           EOF
           fi
 
