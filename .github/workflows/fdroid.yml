@@ -54,17 +54,21 @@ jobs:
       - name: Flutter doctor
         run: flutter doctor -v
 
+      - name: Get GitLab commit
+        run: |
+          SHA=$(git ls-remote https://gitlab.com/gnejusz_pompejusz/tomos.git HEAD | cut -f1)
+          echo "COMMIT=$SHA" >> $GITHUB_ENV
+
+
       - name: Resolve version
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "VERSION_NAME=${{ inputs.versionName }}" >> $GITHUB_ENV
             echo "VERSION_CODE=${{ inputs.versionCode }}" >> $GITHUB_ENV
-            echo "COMMIT=${{ github.sha }}" >> $GITHUB_ENV
           else
             TAG=${GITHUB_REF#refs/tags/}
             echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
             echo "VERSION_CODE=$(echo ${TAG#v} | tr -d '.')" >> $GITHUB_ENV
-            echo "COMMIT=$TAG" >> $GITHUB_ENV
           fi
 
       - name: Restore keystore
