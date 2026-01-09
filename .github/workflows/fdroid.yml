@@ -29,6 +29,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Increase Git buffer limits (fix GitLab clone issues)
+        run: |
+          git config --global fetch.fsckobjects false
+          git config --global http.postBuffer 524288000
+          git config --global http.maxRequestBuffer 1000M
+          git config --global http.lowSpeedLimit 0
+          git config --global http.lowSpeedTime 999999
+    
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
