@@ -21,7 +21,7 @@ jobs:
   fdroid:
     runs-on: ubuntu-latest
     env:
-      APPID: com.gnejusz.tomos        # ZMIEŃ JEŚLI INNE
+      APPID: com.gnejusz.tomos     
       FLUTTER_VERSION: ${{ inputs.flutterVersion || '3.38.5' }}
 
     steps:
@@ -118,7 +118,7 @@ jobs:
             cat <<EOF >> "$METADATA"
 
           AllowedAPKSigningKeys:
-            - SHA256:1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
+            - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
           EOF
           fi
 
