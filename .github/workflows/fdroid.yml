@@ -100,35 +100,37 @@ jobs:
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
 
-          # Dodaj sekcję Builds: jeśli nie istnieje
           if ! grep -q "^Builds:" "$METADATA"; then
             echo "" >> "$METADATA"
             echo "Builds:" >> "$METADATA"
           fi
 
-          # Dodaj nową wersję jeśli jeszcze nie ma takiej versionName
-           if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
+          if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
             echo "  - versionName: \"$VERSION_NAME\"" >> "$METADATA"
             echo "    versionCode: $VERSION_CODE" >> "$METADATA"
             echo "    commit: $COMMIT" >> "$METADATA"
             echo "    subdir: ." >> "$METADATA"
             echo "    prebuild:" >> "$METADATA"
-            echo "      # DEBUG: Stan przed" >> "$METADATA"
-            echo "      - echo \"=== DEBUG PRE: keystore.properties ===\"" >> "$METADATA"
-            echo "      - ls -la keystore.properties key.properties || true" >> "$METADATA"
-            echo "      - cat keystore.properties || echo \"brak\"" >> "$METADATA"
-            echo "      # Tworzymy pusty keystore.properties, żeby uniknąć fallbacka '../../release-key.p12'" >> "$METADATA"
-            echo "      - touch keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEYSTORE_PATH=\" >> keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEYSTORE_PASSWORD=\" >> keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEY_ALIAS=\" >> keystore.properties" >> "$METADATA"
-            echo "      # Zmieniamy release signing na debug (debug keystore zawsze istnieje i nie wymaga haseł)" >> "$METADATA"
+            echo "      # Tworzymy keystore.properties w POPRAWNEJ ścieżce android/ (rootProject szuka tam)" >> "$METADATA"
+            echo "      - mkdir -p android" >> "$METADATA"
+            echo "      - touch android/keystore.properties" >> "$METADATA"
+            echo "      - echo \"# Pusty plik dla F-Droid – omija fallback do release-key.p12\" > android/keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEYSTORE_PATH=\" >> android/keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEYSTORE_PASSWORD=\" >> android/keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEY_ALIAS=\" >> android/keystore.properties" >> "$METADATA"
+            echo "      # Mocna zmiana release → debug signing (różne indentacje/patterny)" >> "$METADATA"
+            echo "      - sed -i 's/^\s*signingConfig\s\+signingConfigs\.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
             echo "      - sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
-            echo "      # DEBUG: Stan po" >> "$METADATA"
-            echo "      - echo \"=== DEBUG POST: keystore.properties ===\"" >> "$METADATA"
-            echo "      - cat keystore.properties" >> "$METADATA"
-            echo "      - echo \"=== DEBUG POST: buildTypes ===\"" >> "$METADATA"
-            echo "      - grep -n -A5 -B5 buildTypes android/app/build.gradle || true" >> "$METADATA"
+            echo "      # Debug: co się stało" >> "$METADATA"
+            echo "      - echo \"=== DEBUG: android/keystore.properties ===\"" >> "$METADATA"
+            echo "      - cat android/keystore.properties || echo \"brak\"" >> "$METADATA"
+            echo "      - echo \"=== DEBUG: linie z signingConfigs ===\"" >> "$METADATA"
+            echo "      - grep -n -A10 -B5 signingConfigs android/app/build.gradle || true" >> "$METADATA"
+            echo "      - echo \"=== DEBUG: linie z buildTypes ===\"" >> "$METADATA"
+            echo "      - grep -n -A10 -B10 buildTypes android/app/build.gradle || true" >> "$METADATA"
+            echo "      # FINALNY build.gradle przed Gradle" >> "$METADATA"
+            echo "      - echo \"=== FINALNY android/app/build.gradle ===\"" >> "$METADATA"
+            echo "      - cat android/app/build.gradle" >> "$METADATA"
             echo "    init: |" >> "$METADATA"
             echo "      export LANG=C.UTF-8" >> "$METADATA"
             echo "      export LC_ALL=C.UTF-8" >> "$METADATA"
@@ -142,12 +144,12 @@ jobs:
             echo "      - build/app/outputs/flutter-apk/app-x86_64-release.apk" >> "$METADATA"
           fi
 
-          # Dodaj AllowedAPKSigningKeys jeśli nie istnieje
           if ! grep -q "^AllowedAPKSigningKeys:" "$METADATA"; then
             echo "" >> "$METADATA"
             echo "AllowedAPKSigningKeys:" >> "$METADATA"
             echo "  - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
           fi
+
       - name: Debug keystore paths
         run: |
           echo "=== CURRENT DIR ==="
