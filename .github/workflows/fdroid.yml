@@ -78,10 +78,10 @@ jobs:
             echo "VERSION_CODE=$(echo ${TAG#v} | tr -d '.')" >> $GITHUB_ENV
           fi
 
-      - name: Restore keystore for Gradle
+      - name: Create F-Droid keystore
         run: |
-          mkdir -p android/app
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.p12
+          mkdir -p fdroid
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/keystore.p12
 
       - name: Generate changelog
         run: |
@@ -111,6 +111,11 @@ jobs:
                 versionCode: $VERSION_CODE
                 commit: $COMMIT
                 subdir: .
+                prebuild:
+                  - rm -f android/app/release-key.p12 android/app/*.jks android/app/*.p12 || true
+                  - rm -f android/key.properties android/keystore.properties || true
+                  - sed -i '/signingConfig signingConfigs.release/d' android/app/build.gradle || true
+                  - sed -i '/signingConfig signingConfigs.debug/d' android/app/build.gradle || true
                 init: |
                   export LANG=C.UTF-8
                   export LC_ALL=C.UTF-8
@@ -122,7 +127,7 @@ jobs:
                   - build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
                   - build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
                   - build/app/outputs/flutter-apk/app-x86_64-release.apk
-          EOF
+            EOF
           fi
 
           if ! grep -q "^AllowedAPKSigningKeys:" "$METADATA"; then
@@ -130,8 +135,9 @@ jobs:
 
           AllowedAPKSigningKeys:
             - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
-          EOF
+            EOF
           fi
+
       - name: Debug keystore paths
         run: |
           echo "=== CURRENT DIR ==="
@@ -150,23 +156,17 @@ jobs:
           ls -R fdroid/build/com.gnejusz.tomos || true
 
           echo "=== CHECK FILE ==="
-          if [ -f fdroid/build/com.gnejusz.tomos/release-key.p12 ]; then
-            echo "FOUND release-key.p12"
+          if [ -f fdroid/keystore.p12 ]; then
+            echo "FOUND fdroid/keystore.p12"
           else
-            echo "NOT FOUND release-key.p12"
+            echo "NOT FOUND fdroid/keystore.p12"
           fi
 
       - name: fdroid build
         env:
-          # dla fdroidserver
           FDROID_KEYSTORE: keystore.p12
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
           FDROID_KEY_PASS: ${{ secrets.FDROID_KEY_PASS }}
-
-          # dla Gradle
-          KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASS }}
-          KEY_ALIAS: release
-
         run: |
           cd fdroid
           fdroid build --verbose "$APPID:$VERSION_NAME"
