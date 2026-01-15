@@ -86,7 +86,8 @@ jobs:
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
           if [ ! -f "$METADATA" ]; then
-            echo "Plik metadata nie istnieje! Utwórz go ręcznie." && exit 1
+              mkdir -p fdroid/metadata
+              echo "Builds:" > "$METADATA"
           fi
 
           # Dodaj nowy wpis dla wersji, jeśli nie istnieje
