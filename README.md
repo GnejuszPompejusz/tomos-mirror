@@ -42,6 +42,9 @@ README.md
 - Generates metadata and the **F‑Droid import repository**  
 - Produces artifacts ready for F‑Droid inclusion
 
+```
+https://gnejuszpompejusz.github.io/tomos-mirror/fdroid/repo
+```
 ---
 
 ## **🔧 Requirements**

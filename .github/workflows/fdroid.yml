@@ -2,7 +2,7 @@ name: Build & Publish F-Droid Repo
 
 on:
   push:
-    tags: [ "v*" ]
+    tags: ["v*"]
 
   workflow_dispatch:
     inputs:
@@ -21,7 +21,7 @@ jobs:
   fdroid:
     runs-on: ubuntu-latest
     env:
-      APPID: com.gnejusz.tomos     
+      APPID: com.gnejusz.tomos
       FLUTTER_VERSION: ${{ inputs.flutterVersion || '3.38.5' }}
 
     steps:
@@ -36,12 +36,12 @@ jobs:
           git config --global http.maxRequestBuffer 1000M
           git config --global http.lowSpeedLimit 0
           git config --global http.lowSpeedTime 999999
-    
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -67,7 +67,6 @@ jobs:
           SHA=$(git ls-remote https://gitlab.com/gnejusz_pompejusz/tomos.git HEAD | cut -f1)
           echo "COMMIT=$SHA" >> $GITHUB_ENV
 
-
       - name: Resolve version
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -79,10 +78,9 @@ jobs:
             echo "VERSION_CODE=$(echo ${TAG#v} | tr -d '.')" >> $GITHUB_ENV
           fi
 
-      - name: Restore keystore
+      - name: Restore keystore for Gradle
         run: |
-          mkdir -p fdroid
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/keystore.p12
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
 
       - name: Generate changelog
         run: |
@@ -136,9 +134,15 @@ jobs:
 
       - name: fdroid build
         env:
+          # dla fdroidserver
           FDROID_KEYSTORE: keystore.p12
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
           FDROID_KEY_PASS: ${{ secrets.FDROID_KEY_PASS }}
+
+          # dla Gradle
+          KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASS }}
+          KEY_ALIAS: release
+
         run: |
           cd fdroid
           fdroid build --verbose "$APPID:$VERSION_NAME"
