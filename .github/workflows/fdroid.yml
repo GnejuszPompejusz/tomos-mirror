@@ -80,7 +80,8 @@ jobs:
 
       - name: Restore keystore for Gradle
         run: |
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
+          mkdir -p fdroid/build/com.gnejusz.tomos
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/build/com.gnejusz.tomos/release-key.p12
 
       - name: Generate changelog
         run: |
@@ -106,7 +107,7 @@ jobs:
 
           if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
             cat <<EOF >> "$METADATA"
-              - versionName: $VERSION_NAME
+              - versionName: "$VERSION_NAME"
                 versionCode: $VERSION_CODE
                 commit: $COMMIT
                 subdir: .
