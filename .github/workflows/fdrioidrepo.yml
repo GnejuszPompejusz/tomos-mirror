@@ -1,0 +1,154 @@
+name: Build & Publish F-Droid Repo
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: "App version name (np. 1.0.0)"
+        required: true
+      versionCode:
+        description: "Android versionCode (np. 10)"
+        required: true
+      flutterVersion:
+        description: "Flutter version"
+        required: false
+        default: "3.24.3"
+
+jobs:
+  fdroid:
+    runs-on: ubuntu-latest
+    env:
+      APPID: dev.gnejusz.tomos
+      GITLAB_URL: "https://gitlab.com/twoja-nazwa/twój-projekt.git" # <-- ZMIEŃ NA SWÓJ URL
+      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || '3.24.3' }}
+
+    steps:
+      - name: Checkout Hosting Repo (GitHub)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install fdroidserver
+        run: |
+          sudo apt update
+          sudo apt install -y fdroidserver libglu1-mesa python3-pip
+          pip3 install --upgrade fdroidserver
+
+      - name: Resolve Version & Clone Source
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "VERSION_NAME=${{ github.event.inputs.versionName }}" >> $GITHUB_ENV
+            echo "VERSION_CODE=${{ github.event.inputs.versionCode }}" >> $GITHUB_ENV
+          else
+            TAG=${GITHUB_REF#refs/tags/}
+            echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
+            echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_ENV
+          fi
+          
+          git clone --depth 1 ${{ env.GITLAB_URL }} source_code
+          cd source_code
+          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Prepare Signing for Gradle
+        run: |
+          cd source_code/android
+          
+          # Tworzenie pliku properties, którego oczekuje Twój build.gradle
+          cat > keystore.properties <<EOF
+          KEYSTORE_PATH=../release-key.p12
+          KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
+          KEY_ALIAS=repo
+          EOF
+          
+          # Dekodowanie klucza .p12 do lokalizacji oczekiwanej przez Gradle
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > ../release-key.p12
+          
+          # Weryfikacja aliasu (debug info w logach)
+          echo "Weryfikacja klucza:"
+          keytool -list -v -keystore ../release-key.p12 \
+            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} | grep "Alias name" || echo "BŁĄD: Nie znaleziono klucza!"
+
+      - name: Build Flutter APK
+        run: |
+          cd source_code
+          flutter pub get
+          flutter build apk --release \
+            --build-name=${{ env.VERSION_NAME }} \
+            --build-number=${{ env.VERSION_CODE }}
+          mkdir -p ../apks
+          cp build/app/outputs/flutter-apk/app-release.apk ../apks/${{ env.APPID }}-${{ env.VERSION_CODE }}.apk
+
+      - name: Prepare F-Droid Environment
+        run: |
+          mkdir -p fdroid/repo fdroid/metadata/${{ env.APPID }}/changelogs
+          # Konfiguracja repozytorium F-Droid
+          echo "${{ secrets.CONFIG_YML_BASE64 }}" | base64 -d > fdroid/config.yml
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/keystore.p12
+
+      - name: Patch Metadata & Changelog
+        run: |
+          cd source_code
+          git log -1 --pretty=format:"- %s (%h)" > "../fdroid/metadata/${{ env.APPID }}/changelogs/${{ env.VERSION_CODE }}.txt"
+          cd ..
+          
+          METADATA="fdroid/metadata/${{ env.APPID }}.yml"
+          if [ ! -f "$METADATA" ]; then
+            cat > "$METADATA" <<EOF
+Name: Tomos
+Summary: Krótki opis Twojej aplikacji
+Description: |
+  Pełny opis aplikacji zaciągnięty z GitLab.
+Categories:
+  - Internet
+RepoType: git
+Repo: ${{ env.GITLAB_URL }}
+
+Builds:
+EOF
+          fi
+          
+          if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
+            cat >> "$METADATA" <<EOF
+    - versionName: "${{ env.VERSION_NAME }}"
+      versionCode: ${{ env.VERSION_CODE }}
+      commit: ${{ env.COMMIT }}
+      disable: yes
+EOF
+          fi
+
+      - name: Update F-Droid Index
+        env:
+          FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
+        run: |
+          cp apks/*.apk fdroid/repo/
+          cd fdroid
+          fdroid update --create-metadata --pretty --verbose --use-date-from-apk
+
+      - name: Clean & Deploy
+        run: |
+          # Usuwamy wrażliwe pliki przed commitem do GitHub Pages
+          rm -f fdroid/keystore.p12 fdroid/config.yml
+          rm -f source_code/release-key.p12
+          
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add fdroid/
+          git commit -m "Release ${{ env.VERSION_NAME }} (build ${{ env.VERSION_CODE }})" || echo "No changes"
+          git push
+          
