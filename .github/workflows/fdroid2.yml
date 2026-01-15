@@ -1,4 +1,4 @@
-name: Build & Publish F-Droid Repo
+name: Build & Publish F-Droid Repo NEW
 
 on:
   push:
@@ -69,8 +69,11 @@ jobs:
 
       - name: Prepare keystore
         run: |
-          mkdir -p fdroid
+          test -f fdroid/keystore.properties.template || \
+            (echo "Brak fdroid/keystore.properties.template" && exit 1)
+
           echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/release-key.p12
+
           sed "s/__FDROID_KEYSTORE_PASS__/${{ secrets.FDROID_KEYSTORE_PASS }}/g" \
             fdroid/keystore.properties.template > fdroid/keystore.properties
 
