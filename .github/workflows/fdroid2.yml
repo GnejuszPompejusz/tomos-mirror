@@ -31,6 +31,7 @@ jobs:
 
       - name: Increase Git buffer limits
         run: |
+          ls -l fdroid/metadata/
           git config --global fetch.fsckobjects false
           git config --global http.postBuffer 524288000
           git config --global http.maxRequestBuffer 1000M
@@ -82,39 +83,41 @@ jobs:
           mkdir -p "fdroid/metadata/$APPID/changelogs"
           git log --pretty=format:"- %s" -n 50 > "fdroid/metadata/$APPID/changelogs/$VERSION_CODE.txt"
 
-      - name: Update metadata for new version
+      - name: Update metadata with new version
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
+
+          # Sprawdź czy plik istnieje (pobrany z repo GitHub)
           if [ ! -f "$METADATA" ]; then
-              mkdir -p fdroid/metadata
-              echo "Builds:" > "$METADATA"
+            echo "BŁĄD: Plik metadanych $METADATA nie istnieje w repozytorium GitHub!"
+            ls -l fdroid/metadata/
+            exit 1
           fi
 
-          # Dodaj nowy wpis dla wersji, jeśli nie istnieje
+          # Dodaj wpis budowania tylko jeśli ta wersja jeszcze nie istnieje
           if ! grep -q "versionName: \"$VERSION_NAME\"" "$METADATA"; then
-            cat >> "$METADATA" <<'EOF'
-
-          - versionName: "__VERSION_NAME__"
-            versionCode: __VERSION_CODE__
-            commit: __COMMIT__
-            subdir: .
-            init: |
-              cp fdroid/keystore.properties android/keystore.properties
-              cp fdroid/release-key.p12 android/release-key.p12
-              flutter pub get
-            gradle:
-              - assembleRelease
-            output:
-              - app/build/outputs/apk/release/app-release.apk 
+            # Usuwamy '[]' jeśli Builds było puste
+            sed -i 's/Builds: \[\]/Builds:/g' "$METADATA"
+            
+            # Dopisz nową wersję na końcu pliku
+            cat >> "$METADATA" <<EOF
+          - versionName: "$VERSION_NAME"
+            versionCode: $VERSION_CODE
+           commit: $COMMIT
+           subdir: .
+           init: |
+          cp fdroid/keystore.properties android/keystore.properties
+          cp fdroid/release-key.p12 android/release-key.p12
+          flutter pub get
+          gradle:
+          - assembleRelease
+          output: app/build/outputs/apk/release/app-release.apk
           EOF
-            sed -i "s/__VERSION_NAME__/$VERSION_NAME/g" "$METADATA"
-            sed -i "s/__VERSION_CODE__/$VERSION_CODE/g" "$METADATA"
-            sed -i "s/__COMMIT__/$COMMIT/g" "$METADATA"
           fi
 
-          # Upewnij się, że klucz jest w pliku (tylko raz)
-          if ! grep -q "1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" "$METADATA"; then
-            echo -e "\nAllowedAPKSigningKeys:\n- 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
+          # Dodaj klucz podpisu jeśli go nie ma
+          if ! grep -q "AllowedAPKSigningKeys" "$METADATA"; then
+            echo -e "\nAllowedAPKSigningKeys:\n  - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
           fi
 
       - name: Debug metadata
@@ -126,7 +129,7 @@ jobs:
       - name: fdroid build
         run: |
           cd fdroid
-          fdroid build --verbose "$APPID:$VERSION_NAME"
+          fdroid build --verbose --local-copy "$APPID:$VERSION_NAME"
 
       - name: fdroid verify
         run: |
