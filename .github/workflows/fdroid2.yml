@@ -105,8 +105,8 @@ jobs:
             gradle:
               - assembleRelease
             output:
-              - app/build/outputs/apk/release/app-release.apk
-            EOF
+              - app/build/outputs/apk/release/app-release.apk 
+          EOF
             sed -i "s/__VERSION_NAME__/$VERSION_NAME/g" "$METADATA"
             sed -i "s/__VERSION_CODE__/$VERSION_CODE/g" "$METADATA"
             sed -i "s/__COMMIT__/$COMMIT/g" "$METADATA"
