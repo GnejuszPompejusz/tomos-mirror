@@ -100,44 +100,42 @@ jobs:
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
 
+          # Dodaj sekcję Builds: jeśli nie istnieje
           if ! grep -q "^Builds:" "$METADATA"; then
             echo "" >> "$METADATA"
             echo "Builds:" >> "$METADATA"
           fi
 
+          # Dodaj nową wersję jeśli jeszcze nie ma takiej versionName
           if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
-            cat <<EOF >> "$METADATA"
-              - versionName: "$VERSION_NAME"
-                versionCode: $VERSION_CODE
-                commit: $COMMIT
-                subdir: .
-                prebuild:
-                  - rm -f android/app/release-key.p12 android/app/*.jks android/app/*.p12 || true
-                  - rm -f android/key.properties android/keystore.properties || true
-                  - sed -i '/signingConfig signingConfigs.release/d' android/app/build.gradle || true
-                  - sed -i '/signingConfig signingConfigs.debug/d' android/app/build.gradle || true
-                init: |
-                  export LANG=C.UTF-8
-                  export LC_ALL=C.UTF-8
-                  rm -rf ~/.gradle/caches || true
-                  flutter pub get
-                  flutter build apk --release --split-per-abi
-                gradle: []
-                output:
-                  - build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-                  - build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-                  - build/app/outputs/flutter-apk/app-x86_64-release.apk
-            EOF
+            echo "  - versionName: \"$VERSION_NAME\"" >> "$METADATA"
+            echo "    versionCode: $VERSION_CODE" >> "$METADATA"
+            echo "    commit: $COMMIT" >> "$METADATA"
+            echo "    subdir: ." >> "$METADATA"
+            echo "    prebuild:" >> "$METADATA"
+            echo "      - rm -f android/app/release-key.p12 android/app/*.jks android/app/*.p12 || true" >> "$METADATA"
+            echo "      - rm -f android/key.properties android/keystore.properties || true" >> "$METADATA"
+            echo "      - sed -i '/signingConfig signingConfigs.release/d' android/app/build.gradle || true" >> "$METADATA"
+            echo "      - sed -i '/signingConfig signingConfigs.debug/d' android/app/build.gradle || true" >> "$METADATA"
+            echo "    init: |" >> "$METADATA"
+            echo "      export LANG=C.UTF-8" >> "$METADATA"
+            echo "      export LC_ALL=C.UTF-8" >> "$METADATA"
+            echo "      rm -rf ~/.gradle/caches || true" >> "$METADATA"
+            echo "      flutter pub get" >> "$METADATA"
+            echo "      flutter build apk --release --split-per-abi" >> "$METADATA"
+            echo "    gradle: []" >> "$METADATA"
+            echo "    output:" >> "$METADATA"
+            echo "      - build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk" >> "$METADATA"
+            echo "      - build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" >> "$METADATA"
+            echo "      - build/app/outputs/flutter-apk/app-x86_64-release.apk" >> "$METADATA"
           fi
 
+          # Dodaj AllowedAPKSigningKeys jeśli nie istnieje
           if ! grep -q "^AllowedAPKSigningKeys:" "$METADATA"; then
-            cat <<EOF >> "$METADATA"
-
-          AllowedAPKSigningKeys:
-            - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
-            EOF
+            echo "" >> "$METADATA"
+            echo "AllowedAPKSigningKeys:" >> "$METADATA"
+            echo "  - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
           fi
-
       - name: Debug keystore paths
         run: |
           echo "=== CURRENT DIR ==="

@@ -45,6 +45,10 @@ README.md
 ```
 https://gnejuszpompejusz.github.io/tomos-mirror/fdroid/repo
 ```
+U can scan tis file to add to F-Droid app.
+
+[![QR Code](https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://gnejuszpompejusz.github.io/tomos-mirror/fdroid/repo)](https://gnejuszpompejusz.github.io/tomos-mirror/fdroid/repo)
+
 ---
 
 ## **🔧 Requirements**

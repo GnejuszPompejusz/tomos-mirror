@@ -23,7 +23,7 @@ jobs:
             - name: Restore keystore for Gradle
               run: |
                   mkdir -p tomos/android/app
-                  echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > tomos/android/app/release-key.p12
+                  echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > tomos/release-key.p12
 
             - name: Install dependencies
               run: flutter pub get
