@@ -87,39 +87,15 @@ jobs:
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
 
-          # Sprawdź czy plik istnieje (pobrany z repo GitHub)
-          if [ ! -f "$METADATA" ]; then
-            echo "BŁĄD: Plik metadanych $METADATA nie istnieje w repozytorium GitHub!"
-            ls -l fdroid/metadata/
-            exit 1
-          fi
-
-          # Dodaj wpis budowania tylko jeśli ta wersja jeszcze nie istnieje
+          # Dopisz nową wersję, używając skróconego formatu
+          # F-Droid skopiuje parametry (init, gradle itp.) z poprzedniego buildu automatycznie
           if ! grep -q "versionName: \"$VERSION_NAME\"" "$METADATA"; then
-            # Usuwamy '[]' jeśli Builds było puste
-            sed -i 's/Builds: \[\]/Builds:/g' "$METADATA"
-            
-            # Dopisz nową wersję na końcu pliku
             cat >> "$METADATA" <<EOF
           - versionName: "$VERSION_NAME"
             versionCode: $VERSION_CODE
-           commit: $COMMIT
-           subdir: .
-           init: |
-          cp fdroid/keystore.properties android/keystore.properties
-          cp fdroid/release-key.p12 android/release-key.p12
-          flutter pub get
-          gradle:
-          - assembleRelease
-          output: app/build/outputs/apk/release/app-release.apk
+            commit: $COMMIT
           EOF
           fi
-
-          # Dodaj klucz podpisu jeśli go nie ma
-          if ! grep -q "AllowedAPKSigningKeys" "$METADATA"; then
-            echo -e "\nAllowedAPKSigningKeys:\n  - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
-          fi
-
       - name: Debug metadata
         run: |
           echo "===== METADATA FILE ====="
