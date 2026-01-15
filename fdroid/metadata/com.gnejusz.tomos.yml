@@ -10,9 +10,9 @@ Categories:
 License: MIT
 
 AuthorName: Gnejusz Pompejusz
-AuthorEmail: ""  # opcjonalnie dodaj, jeśli chcesz publiczny email
+AuthorEmail: "" # opcjonalnie dodaj, jeśli chcesz publiczny email
 
-WebSite: ""  # brak dedykowanej strony – możesz dodać później
+WebSite: "" # brak dedykowanej strony – możesz dodać później
 SourceCode: https://gitlab.com/gnejusz_pompejusz/tomos
 IssueTracker: https://gitlab.com/gnejusz_pompejusz/tomos/-/issues
 
@@ -37,4 +37,5 @@ Description: |
   - **Auto-Login**: Like the automatons of Hephaestus, *Tomos* offers **auto-login** for swift access to the digital agora, sparing users the Sisyphean task of repeated credential entry.
 
 # Builds dodawane automatycznie przez workflow (nie edytuj ręcznie)
+Builds: []
 # AllowedAPKSigningKeys dodane jednorazowo przez workflow
