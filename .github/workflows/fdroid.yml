@@ -80,8 +80,8 @@ jobs:
 
       - name: Restore keystore for Gradle
         run: |
-          mkdir -p fdroid/build/com.gnejusz.tomos
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/build/com.gnejusz.tomos/release-key.p12
+          mkdir -p android/app
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.p12
 
       - name: Generate changelog
         run: |
@@ -131,6 +131,29 @@ jobs:
           AllowedAPKSigningKeys:
             - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
           EOF
+          fi
+      - name: Debug keystore paths
+        run: |
+          echo "=== CURRENT DIR ==="
+          pwd
+
+          echo "=== LIST ROOT ==="
+          ls -R .
+
+          echo "=== LIST fdroid ==="
+          ls -R fdroid || true
+
+          echo "=== LIST fdroid/build ==="
+          ls -R fdroid/build || true
+
+          echo "=== LIST fdroid/build/com.gnejusz.tomos ==="
+          ls -R fdroid/build/com.gnejusz.tomos || true
+
+          echo "=== CHECK FILE ==="
+          if [ -f fdroid/build/com.gnejusz.tomos/release-key.p12 ]; then
+            echo "FOUND release-key.p12"
+          else
+            echo "NOT FOUND release-key.p12"
           fi
 
       - name: fdroid build
