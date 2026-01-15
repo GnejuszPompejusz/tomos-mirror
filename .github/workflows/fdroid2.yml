@@ -118,6 +118,11 @@ jobs:
           - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
           EOF
                   fi
+      - name: Debug metadata
+        run: |
+          echo "===== METADATA FILE ====="
+          cat fdroid/metadata/$APPID.yml
+          echo "========================="
 
       - name: fdroid build
         run: |
