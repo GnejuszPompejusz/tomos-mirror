@@ -96,8 +96,8 @@ jobs:
               > "fdroid/metadata/$APPID/changelogs/$VERSION_CODE.txt"
           fi
 
-      - name: Patch metadata
-        run: |
+          - name: Patch metadata
+            run: |
           METADATA="fdroid/metadata/$APPID.yml"
 
           if ! grep -q "^Builds:" "$METADATA"; then
@@ -111,25 +111,15 @@ jobs:
             echo "    commit: $COMMIT" >> "$METADATA"
             echo "    subdir: ." >> "$METADATA"
             echo "    prebuild:" >> "$METADATA"
-            echo "      # Tworzymy keystore.properties w POPRAWNEJ ścieżce android/ (rootProject szuka tam)" >> "$METADATA"
-            echo "      - mkdir -p android" >> "$METADATA"
-            echo "      - touch android/keystore.properties" >> "$METADATA"
-            echo "      - echo \"# Pusty plik dla F-Droid – omija fallback do release-key.p12\" > android/keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEYSTORE_PATH=\" >> android/keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEYSTORE_PASSWORD=\" >> android/keystore.properties" >> "$METADATA"
-            echo "      - echo \"KEY_ALIAS=\" >> android/keystore.properties" >> "$METADATA"
-            echo "      # Mocna zmiana release → debug signing (różne indentacje/patterny)" >> "$METADATA"
-            echo "      - sed -i 's/^\s*signingConfig\s\+signingConfigs\.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
+            echo "      # Usuwamy kod wczytujący keystore.properties i fallback" >> "$METADATA"
+            echo "      - sed -i '/def keystorePropertiesFile = rootProject.file(\"keystore.properties\")/,/}/d' android/app/build.gradle || true" >> "$METADATA"
+            echo "      # Usuwamy cały blok signingConfigs (w tym release)" >> "$METADATA"
+            echo "      - sed -i '/signingConfigs {/,/}/d' android/app/build.gradle || true" >> "$METADATA"
+            echo "      # Ustawiamy debug signing w buildTypes release" >> "$METADATA"
+            echo "      - sed -i 's/^\s*signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
             echo "      - sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
-            echo "      # Debug: co się stało" >> "$METADATA"
-            echo "      - echo \"=== DEBUG: android/keystore.properties ===\"" >> "$METADATA"
-            echo "      - cat android/keystore.properties || echo \"brak\"" >> "$METADATA"
-            echo "      - echo \"=== DEBUG: linie z signingConfigs ===\"" >> "$METADATA"
-            echo "      - grep -n -A10 -B5 signingConfigs android/app/build.gradle || true" >> "$METADATA"
-            echo "      - echo \"=== DEBUG: linie z buildTypes ===\"" >> "$METADATA"
-            echo "      - grep -n -A10 -B10 buildTypes android/app/build.gradle || true" >> "$METADATA"
-            echo "      # FINALNY build.gradle przed Gradle" >> "$METADATA"
-            echo "      - echo \"=== FINALNY android/app/build.gradle ===\"" >> "$METADATA"
+            echo "      # Debug finalny – pełny build.gradle przed Gradle" >> "$METADATA"
+            echo "      - echo \"=== FINALNY android/app/build.gradle po zmianach ===\"" >> "$METADATA"
             echo "      - cat android/app/build.gradle" >> "$METADATA"
             echo "    init: |" >> "$METADATA"
             echo "      export LANG=C.UTF-8" >> "$METADATA"
