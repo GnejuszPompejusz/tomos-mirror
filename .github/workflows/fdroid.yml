@@ -171,7 +171,23 @@ jobs:
           else
             echo "NOT FOUND fdroid/keystore.p12"
           fi
-
+      - name: Debug before fdroid build
+        run: |
+          echo "=== DEBUG PRZED fdroid build ==="
+          echo "Current dir:"
+          pwd
+          echo "ls -la fdroid/"
+          ls -la fdroid/
+          echo "=== fdroid/keystore.p12 istnieje? ==="
+          if [ -f fdroid/keystore.p12 ]; then
+            echo "ZNALEZIONO keystore.p12"
+            echo "(rozmiar: $(stat -c%s fdroid/keystore.p12) bajtów)"
+          else
+            echo "NIE ZNALEZIONO keystore.p12"
+          fi
+          echo "=== Finalny metadata.yml ==="
+          cat fdroid/metadata/com.gnejusz.tomos.yml
+          echo "=== Koniec debug przed build ==="
       - name: fdroid build
         env:
           FDROID_KEYSTORE: keystore.p12
