@@ -82,17 +82,17 @@ jobs:
           mkdir -p "fdroid/metadata/$APPID/changelogs"
           git log --pretty=format:"- %s" -n 50 > "fdroid/metadata/$APPID/changelogs/$VERSION_CODE.txt"
 
-      - name: Patch metadata
+      - name: Update metadata for new version
         run: |
           METADATA="fdroid/metadata/$APPID.yml"
-          mkdir -p fdroid/metadata
-
           if [ ! -f "$METADATA" ]; then
-            echo "Builds:" > "$METADATA"
+            echo "Plik metadata nie istnieje! Utwórz go ręcznie." && exit 1
           fi
 
+          # Dodaj nowy wpis dla wersji, jeśli nie istnieje
           if ! grep -q "versionName: \"$VERSION_NAME\"" "$METADATA"; then
             cat >> "$METADATA" <<'EOF'
+
           - versionName: "__VERSION_NAME__"
             versionCode: __VERSION_CODE__
             commit: __COMMIT__
@@ -106,18 +106,16 @@ jobs:
             output:
               - app/build/outputs/apk/release/app-release.apk
             EOF
-                    sed -i "s/__VERSION_NAME__/$VERSION_NAME/g" "$METADATA"
-                    sed -i "s/__VERSION_CODE__/$VERSION_CODE/g" "$METADATA"
-                    sed -i "s/__COMMIT__/$COMMIT/g" "$METADATA"
-                  fi
+            sed -i "s/__VERSION_NAME__/$VERSION_NAME/g" "$METADATA"
+            sed -i "s/__VERSION_CODE__/$VERSION_CODE/g" "$METADATA"
+            sed -i "s/__COMMIT__/$COMMIT/g" "$METADATA"
+          fi
 
-                  if ! grep -q "^AllowedAPKSigningKeys:" "$METADATA"; then
-                    cat >> "$METADATA" <<'EOF'
+          # Upewnij się, że klucz jest w pliku (tylko raz)
+          if ! grep -q "1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" "$METADATA"; then
+            echo -e "\nAllowedAPKSigningKeys:\n- 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE" >> "$METADATA"
+          fi
 
-          AllowedAPKSigningKeys:
-          - 1DCD14A7A1636623F211331784878A06D692F6747382AA79684668402C7094EE
-          EOF
-                  fi
       - name: Debug metadata
         run: |
           echo "===== METADATA FILE ====="
