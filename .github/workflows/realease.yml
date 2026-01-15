@@ -22,17 +22,24 @@ jobs:
 
             - name: Restore keystore for Gradle
               run: |
+                  # 1. Tworzymy folder i dekodujemy klucz p12 do głównego folderu 'tomos'
                   mkdir -p tomos/android/app
                   echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > tomos/release-key.p12
+
+                  # 2. Tworzymy plik keystore.properties, którego szuka Twój build.gradle
+                  # Ścieżka KEYSTORE_PATH musi być relatywna do folderu android/app lub absolutna.
+                  # Twój gradle szuka domyślnie '../../release-key.p12', więc tak go ustawimy.
+                  cat <<EOF > tomos/android/keystore.properties
+                  KEYSTORE_PATH=../release-key.p12
+                  KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
+                  KEY_ALIAS=release
+                  EOF
 
             - name: Install dependencies
               run: flutter pub get
               working-directory: tomos
 
             - name: Build Android Release
-              env:
-                  KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASS }}
-                  KEY_ALIAS: release
               run: flutter build apk --release --split-per-abi --verbose
               working-directory: tomos
 

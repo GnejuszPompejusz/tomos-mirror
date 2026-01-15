@@ -107,16 +107,28 @@ jobs:
           fi
 
           # Dodaj nową wersję jeśli jeszcze nie ma takiej versionName
-          if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
+           if ! grep -q "versionName: $VERSION_NAME" "$METADATA"; then
             echo "  - versionName: \"$VERSION_NAME\"" >> "$METADATA"
             echo "    versionCode: $VERSION_CODE" >> "$METADATA"
             echo "    commit: $COMMIT" >> "$METADATA"
             echo "    subdir: ." >> "$METADATA"
             echo "    prebuild:" >> "$METADATA"
-            echo "      - rm -f android/app/release-key.p12 android/app/*.jks android/app/*.p12 || true" >> "$METADATA"
-            echo "      - rm -f android/key.properties android/keystore.properties || true" >> "$METADATA"
-            echo "      - sed -i '/signingConfig signingConfigs.release/d' android/app/build.gradle || true" >> "$METADATA"
-            echo "      - sed -i '/signingConfig signingConfigs.debug/d' android/app/build.gradle || true" >> "$METADATA"
+            echo "      # DEBUG: Stan przed" >> "$METADATA"
+            echo "      - echo \"=== DEBUG PRE: keystore.properties ===\"" >> "$METADATA"
+            echo "      - ls -la keystore.properties key.properties || true" >> "$METADATA"
+            echo "      - cat keystore.properties || echo \"brak\"" >> "$METADATA"
+            echo "      # Tworzymy pusty keystore.properties, żeby uniknąć fallbacka '../../release-key.p12'" >> "$METADATA"
+            echo "      - touch keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEYSTORE_PATH=\" >> keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEYSTORE_PASSWORD=\" >> keystore.properties" >> "$METADATA"
+            echo "      - echo \"KEY_ALIAS=\" >> keystore.properties" >> "$METADATA"
+            echo "      # Zmieniamy release signing na debug (debug keystore zawsze istnieje i nie wymaga haseł)" >> "$METADATA"
+            echo "      - sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true" >> "$METADATA"
+            echo "      # DEBUG: Stan po" >> "$METADATA"
+            echo "      - echo \"=== DEBUG POST: keystore.properties ===\"" >> "$METADATA"
+            echo "      - cat keystore.properties" >> "$METADATA"
+            echo "      - echo \"=== DEBUG POST: buildTypes ===\"" >> "$METADATA"
+            echo "      - grep -n -A5 -B5 buildTypes android/app/build.gradle || true" >> "$METADATA"
             echo "    init: |" >> "$METADATA"
             echo "      export LANG=C.UTF-8" >> "$METADATA"
             echo "      export LC_ALL=C.UTF-8" >> "$METADATA"
