@@ -103,35 +103,38 @@ jobs:
           echo "Klucz OK."
       - name: Patch Metadata & Changelog
         run: |
-          # Upewnij się, że katalog changelogs istnieje
-          mkdir -p ../fdroid/metadata/${{ env.APPID }}/changelogs
+          FDROID_METADATA_DIR="$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}/changelogs"
+          mkdir -p "$FDROID_METADATA_DIR"
+
           cd source_code
-          git log -1 --pretty=format:"- %s (%h)" > "../fdroid/metadata/${{ env.APPID }}/changelogs/${{ env.VERSION_CODE }}.txt"
-          METADATA="fdroid/metadata/${{ env.APPID }}.yml"
+          git log -1 --pretty=format:"- %s (%h)" > "$FDROID_METADATA_DIR/${{ env.VERSION_CODE }}.txt"
+
+          METADATA="$Github_WORKSPACE/fdroid/metadata/${{ env.APPID }}.yml"
           if [ ! -f "$METADATA" ]; then
             cat > "$METADATA" <<EOF
           Name: Tomos
-          Summary: Krótki opis Twojej aplikacji
+          Summary: A philosophical scroll for Librus Synergia
           Description: |
-            Pełny opis aplikacji zaciągnięty z GitLab.
+            In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, Tomos emerges as a humble yet defiant tool.
+            Crafted in the spirit of ancient Greece, it brings clarity to the bureaucratic labyrinth of grades, messages, and school decrees.
+            Unofficial, open-source, and built with Flutter and Riverpod.
           Categories:
             - Internet
           RepoType: git
-          Repo: ${{ env.GITLAB_URL }}
+          Repo: https://gitlab.com/gnejusz_pompejusz/tomos.git
 
           Builds:
           EOF
-                    fi
-                    
-                    if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
-                      cat >> "$METADATA" <<EOF
+              fi
+
+              if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
+                cat >> "$METADATA" <<EOF
               - versionName: "${{ env.VERSION_NAME }}"
                 versionCode: ${{ env.VERSION_CODE }}
                 commit: ${{ env.COMMIT }}
                 disable: yes
           EOF
-                    fi
-
+              fi
       - name: Update F-Droid Index
         env:
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
