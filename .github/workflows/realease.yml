@@ -30,7 +30,7 @@ jobs:
                   cat <<EOF > tomos/android/keystore.properties
                   KEYSTORE_PATH=/home/runner/work/tomos-mirror/tomos-mirror/tomos/release-key.p12
                   KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
-                  KEY_ALIAS=release
+                  KEY_ALIAS=fdroid
                   EOF
 
             - name: Install dependencies

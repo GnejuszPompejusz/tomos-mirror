@@ -1,4 +1,4 @@
-name: Build & Publish F-Droid Repo
+name: Build & Publish F-Droid Repo 3
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APPID: dev.gnejusz.tomos
-      GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git" 
+      GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git"
       FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || '3.38.5' }}
 
     steps:
@@ -60,7 +60,7 @@ jobs:
             echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
             echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_ENV
           fi
-          
+
           git clone --depth 1 ${{ env.GITLAB_URL }} source_code
           cd source_code
           echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
@@ -68,21 +68,41 @@ jobs:
       - name: Prepare Signing for Gradle
         run: |
           cd source_code/android
-          
+
           # Tworzenie pliku properties, którego oczekuje Twój build.gradle
           cat > keystore.properties <<EOF
-          KEYSTORE_PATH=../release-key.p12
+          KEYSTORE_PATH=release-key.p12
           KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
-          KEY_ALIAS=repo
+          KEY_ALIAS=fdroid
           EOF
-          
+
           # Dekodowanie klucza .p12 do lokalizacji oczekiwanej przez Gradle
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > ../release-key.p12
-          
-          # Weryfikacja aliasu (debug info w logach)
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
+
+          # Sprawdzenie, czy plik faktycznie istnieje
+          if [ ! -f release-key.p12 ]; then
+            echo "BŁĄD: Plik release-key.p12 nie został utworzony!"
+            exit 1
+          fi
+
           echo "Weryfikacja klucza:"
-          keytool -list -v -keystore ../release-key.p12 \
-            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} | grep "Alias name" || echo "BŁĄD: Nie znaleziono klucza!"
+
+          # Próba odczytu keystore
+          if ! keytool -list -v -keystore release-key.p12 \
+            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} > keytool_output.txt 2>&1; then
+              echo "BŁĄD: keytool nie może odczytać keystore!"
+              cat keytool_output.txt
+              exit 1
+          fi
+
+          # Sprawdzenie aliasu
+          if ! grep -q "Alias name: fdroid" keytool_output.txt; then
+            echo "BŁĄD: Alias 'fdroid' nie istnieje w keystore!"
+            cat keytool_output.txt
+            exit 1
+          fi
+
+          echo "Klucz OK — alias 'fdroid' znaleziony."
 
       - name: Build Flutter APK
         run: |
@@ -112,7 +132,7 @@ jobs:
           cd source_code
           git log -1 --pretty=format:"- %s (%h)" > "../fdroid/metadata/${{ env.APPID }}/changelogs/${{ env.VERSION_CODE }}.txt"
           cd ..
-          
+
           METADATA="fdroid/metadata/${{ env.APPID }}.yml"
           if [ ! -f "$METADATA" ]; then
             cat > "$METADATA" <<EOF
@@ -151,10 +171,9 @@ jobs:
           # Usuwamy wrażliwe pliki przed commitem do GitHub Pages
           rm -f fdroid/keystore.p12 fdroid/config.yml
           rm -f source_code/release-key.p12
-          
+
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add fdroid/
           git commit -m "Release ${{ env.VERSION_NAME }} (build ${{ env.VERSION_CODE }})" || echo "No changes"
           git push
-          
