@@ -103,10 +103,10 @@ jobs:
           echo "Klucz OK."
       - name: Patch Metadata & Changelog
         run: |
+          # Upewnij się, że katalog changelogs istnieje
+          mkdir -p ../fdroid/metadata/${{ env.APPID }}/changelogs
           cd source_code
           git log -1 --pretty=format:"- %s (%h)" > "../fdroid/metadata/${{ env.APPID }}/changelogs/${{ env.VERSION_CODE }}.txt"
-          cd ..
-
           METADATA="fdroid/metadata/${{ env.APPID }}.yml"
           if [ ! -f "$METADATA" ]; then
             cat > "$METADATA" <<EOF

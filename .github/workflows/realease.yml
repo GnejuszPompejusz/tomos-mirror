@@ -1,51 +1,97 @@
 name: Build Flutter Android Release
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-    build-android:
-        name: Build for Android
-        runs-on: ubuntu-latest
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to get full git history for versioning
 
-            - name: Install Flutter
-              uses: subosito/flutter-action@v2
-              with:
-                  channel: "stable"
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
 
-            - name: Clone repo from GitLab
-              run: git clone https://gitlab.com/gnejusz_pompejusz/tomos.git
+      - name: Clone repo from GitLab
+        run: git clone https://gitlab.com/gnejusz_pompejusz/tomos.git
 
-            - name: Setup Keystore
-              run: |
-                  # 1. Dekodujemy plik klucza bezpośrednio tam, gdzie Gradle go szuka na podstawie błędu
-                  echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > /home/runner/work/tomos-mirror/tomos-mirror/tomos/release-key.p12
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > /home/runner/work/tomos-mirror/tomos-mirror/tomos/release-key.p12
+          cat <<EOF > tomos/android/keystore.properties
+          KEYSTORE_PATH=/home/runner/work/tomos-mirror/tomos-mirror/tomos/release-key.p12
+          KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
+          KEY_ALIAS=fdroid
+          EOF
 
-                  # 2. Tworzymy plik keystore.properties w folderze android (tam gdzie jest build.gradle)
-                  # Ustawiamy KEYSTORE_PATH na pełną ścieżkę do pliku, który przed chwilą stworzyliśmy
-                  cat <<EOF > tomos/android/keystore.properties
-                  KEYSTORE_PATH=/home/runner/work/tomos-mirror/tomos-mirror/tomos/release-key.p12
-                  KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
-                  KEY_ALIAS=fdroid
-                  EOF
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: tomos
 
-            - name: Install dependencies
-              run: flutter pub get
-              working-directory: tomos
+      - name: Build Android Release
+        run: flutter build apk --release --split-per-abi --verbose
+        working-directory: tomos
 
-            - name: Build Android Release
-              run: flutter build apk --release --split-per-abi --verbose
-              working-directory: tomos
+      - name: Debug output
+        run: ls -R tomos/build/app/outputs/flutter-apk/
 
-            - name: Debug output
-              run: ls -R tomos/build/app/outputs/flutter-apk/
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tomos-android
+          path: tomos/build/app/outputs/flutter-apk/*.apk
 
-            - name: Upload Android artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: tomos-android
-                  path: tomos/build/app/outputs/flutter-apk/*.apk
+      # --- DYNAMIC RELEASE CREATION ---
+      - name: Extract Version from pubspec.yaml
+        id: extract-version
+        run: |
+          VERSION=$(grep -E "^version:" tomos/pubspec.yaml | sed -E 's/^version:\s*//')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate Dynamic Release Tag & Name
+        id: generate-release
+        run: |
+          COMMIT_SHORT=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
+          VERSION=${{ steps.extract-version.outputs.VERSION }}
+          TAG="v${VERSION}+${TIMESTAMP}-${COMMIT_SHORT}"
+          NAME="Tomos ${VERSION} (${TIMESTAMP}-${COMMIT_SHORT})"
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "NAME=$NAME" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "tomos/build/app/outputs/flutter-apk/*.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          tag: ${{ steps.generate-release.outputs.TAG }}
+          name: ${{ steps.generate-release.outputs.NAME }}
+          body: |
+            ## 🚀 Automated Release
+
+            ### Version
+            `v${{ steps.extract-version.outputs.VERSION }}`  
+            Build: `${{ steps.generate-release.outputs.TAG }}`
+
+            ### Details
+            - Built from commit: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            - Triggered by: ${{ github.actor }}
+            - Build time: ${{ github.event_time }}
+            - Platform: Android (split per ABI)
+
+            ### APKs Attached
+            - arm64-v8a
+            - armeabi-v7a
+            - x86_64
+            - x86
+
+            _This release was automatically generated by GitHub Actions._
