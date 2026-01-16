@@ -67,66 +67,40 @@ jobs:
 
       - name: Prepare Signing for Gradle
         run: |
-          cd source_code/android
+          cd source_code
 
-          # Tworzenie pliku properties, którego oczekuje Twój build.gradle
-          cat > keystore.properties <<EOF
-          KEYSTORE_PATH=release-key.p12
+          # Utwórz keystore.properties w android/ (gdzie go szuka build.gradle)
+          cat > android/keystore.properties <<EOF
+          KEYSTORE_PATH=app/release-key.p12
           KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
           KEY_ALIAS=fdroid
           EOF
 
-          # Dekodowanie klucza .p12 do lokalizacji oczekiwanej przez Gradle
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
+          # Utwórz katalog android/app/, jeśli nie istnieje
+          mkdir -p android/app
 
-          # Sprawdzenie, czy plik faktycznie istnieje
-          if [ ! -f release-key.p12 ]; then
-            echo "BŁĄD: Plik release-key.p12 nie został utworzony!"
+          # Zapisz klucz w android/app/release-key.p12
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.p12
+
+          # Weryfikacja
+          if [ ! -f android/app/release-key.p12 ]; then
+            echo "BŁĄD: Klucz nie został utworzony!"
             exit 1
           fi
 
-          echo "Weryfikacja klucza:"
-
-          # Próba odczytu keystore
-          if ! keytool -list -v -keystore release-key.p12 \
+          # Test keytool
+          if ! keytool -list -v -keystore android/app/release-key.p12 \
             -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} > keytool_output.txt 2>&1; then
               echo "BŁĄD: keytool nie może odczytać keystore!"
-              cat keytool_output.txt
               exit 1
           fi
 
-          # Sprawdzenie aliasu
           if ! grep -q "Alias name: fdroid" keytool_output.txt; then
-            echo "BŁĄD: Alias 'fdroid' nie istnieje w keystore!"
-            cat keytool_output.txt
+            echo "BŁĄD: Alias 'fdroid' nie istnieje!"
             exit 1
           fi
 
-          echo "Klucz OK — alias 'fdroid' znaleziony."
-
-      - name: Build Flutter APK
-        run: |
-          cd source_code
-          flutter pub get
-          flutter build apk --release \
-            --build-name=${{ env.VERSION_NAME }} \
-            --build-number=${{ env.VERSION_CODE }}
-          mkdir -p ../apks
-          cp build/app/outputs/flutter-apk/app-release.apk ../apks/${{ env.APPID }}-${{ env.VERSION_CODE }}.apk
-      - name: Validate APK
-        run: |
-          if [ ! -f apks/${{ env.APPID }}-${{ env.VERSION_CODE }}.apk ]; then
-            echo "APK not found!"
-            exit 1
-          fi
-
-      - name: Prepare F-Droid Environment
-        run: |
-          mkdir -p fdroid/repo fdroid/metadata/${{ env.APPID }}/changelogs
-          # Konfiguracja repozytorium F-Droid
-          echo "${{ secrets.CONFIG_YML_BASE64 }}" | base64 -d > fdroid/config.yml
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > fdroid/keystore.p12
-
+          echo "Klucz OK."
       - name: Patch Metadata & Changelog
         run: |
           cd source_code
