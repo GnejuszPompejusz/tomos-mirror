@@ -15,15 +15,15 @@ on:
       flutterVersion:
         description: "Flutter version"
         required: false
-        default: "3.24.3"
+        default: "3.38.5"
 
 jobs:
   fdroid:
     runs-on: ubuntu-latest
     env:
       APPID: dev.gnejusz.tomos
-      GITLAB_URL: "https://gitlab.com/twoja-nazwa/twój-projekt.git" # <-- ZMIEŃ NA SWÓJ URL
-      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || '3.24.3' }}
+      GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git" 
+      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || '3.38.5' }}
 
     steps:
       - name: Checkout Hosting Repo (GitHub)
@@ -93,6 +93,12 @@ jobs:
             --build-number=${{ env.VERSION_CODE }}
           mkdir -p ../apks
           cp build/app/outputs/flutter-apk/app-release.apk ../apks/${{ env.APPID }}-${{ env.VERSION_CODE }}.apk
+      - name: Validate APK
+        run: |
+          if [ ! -f apks/${{ env.APPID }}-${{ env.VERSION_CODE }}.apk ]; then
+            echo "APK not found!"
+            exit 1
+          fi
 
       - name: Prepare F-Droid Environment
         run: |
@@ -110,27 +116,27 @@ jobs:
           METADATA="fdroid/metadata/${{ env.APPID }}.yml"
           if [ ! -f "$METADATA" ]; then
             cat > "$METADATA" <<EOF
-Name: Tomos
-Summary: Krótki opis Twojej aplikacji
-Description: |
-  Pełny opis aplikacji zaciągnięty z GitLab.
-Categories:
-  - Internet
-RepoType: git
-Repo: ${{ env.GITLAB_URL }}
+          Name: Tomos
+          Summary: Krótki opis Twojej aplikacji
+          Description: |
+            Pełny opis aplikacji zaciągnięty z GitLab.
+          Categories:
+            - Internet
+          RepoType: git
+          Repo: ${{ env.GITLAB_URL }}
 
-Builds:
-EOF
-          fi
-          
-          if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
-            cat >> "$METADATA" <<EOF
-    - versionName: "${{ env.VERSION_NAME }}"
-      versionCode: ${{ env.VERSION_CODE }}
-      commit: ${{ env.COMMIT }}
-      disable: yes
-EOF
-          fi
+          Builds:
+          EOF
+                    fi
+                    
+                    if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
+                      cat >> "$METADATA" <<EOF
+              - versionName: "${{ env.VERSION_NAME }}"
+                versionCode: ${{ env.VERSION_CODE }}
+                commit: ${{ env.COMMIT }}
+                disable: yes
+          EOF
+                    fi
 
       - name: Update F-Droid Index
         env:
