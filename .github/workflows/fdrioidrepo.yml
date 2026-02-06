@@ -15,7 +15,7 @@ on:
       flutterVersion:
         description: "Flutter version"
         required: false
-        default: "3.38.5"
+        default: "stable"
 
 jobs:
   fdroid:
@@ -23,8 +23,7 @@ jobs:
     env:
       APPID: dev.gnejusz.tomos
       GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git"
-      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || '3.38.5' }}
-
+      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || 'stable' }}
     steps:
       - name: Checkout Hosting Repo (GitHub)
         uses: actions/checkout@v4
@@ -41,7 +40,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
           cache: true
 
       - name: Install fdroidserver
@@ -50,107 +48,106 @@ jobs:
           sudo apt install -y fdroidserver libglu1-mesa python3-pip
           pip3 install --upgrade fdroidserver
 
-      - name: Resolve Version & Clone Source
+      - name: Clone Source & Resolve Version
+        id: version
         run: |
+          git clone --depth 1 ${{ env.GITLAB_URL }} source_code
+          cd source_code
+          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "VERSION_NAME=${{ github.event.inputs.versionName }}" >> $GITHUB_ENV
             echo "VERSION_CODE=${{ github.event.inputs.versionCode }}" >> $GITHUB_ENV
           else
             TAG=${GITHUB_REF#refs/tags/}
             echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
-            echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_ENV
+            # Eksportuj versionCode z pubspec.yaml lub użyj run_number
+            VERSION_CODE=$(grep "version:" pubspec.yaml | head -1 | sed 's/.*+//' || echo "${{ github.run_number }}")
+            echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
           fi
 
-          git clone --depth 1 ${{ env.GITLAB_URL }} source_code
-          cd source_code
-          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-      - name: Prepare Signing for Gradle
+      - name: Build Release APK
         run: |
           cd source_code
+          flutter pub get
+          flutter build apk --release
+          mkdir -p $GITHUB_WORKSPACE/apks
+          cp build/app/outputs/flutter-apk/app-release.apk $GITHUB_WORKSPACE/apks/${{ env.APPID }}_${{ env.VERSION_CODE }}.apk
 
-          # Utwórz keystore.properties w android/ (gdzie go szuka build.gradle)
+      - name: Setup Signing
+        run: |
+          cd source_code
+          
           cat > android/keystore.properties <<EOF
-          KEYSTORE_PATH=app/release-key.p12
-          KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
-          KEY_ALIAS=fdroid
+          storePassword=${{ secrets.FDROID_KEYSTORE_PASS }}
+          keyPassword=${{ secrets.FDROID_KEYSTORE_PASS }}
+          keyAlias=fdroid
+          storeFile=release-key.jks
           EOF
 
-          # Utwórz katalog android/app/, jeśli nie istnieje
           mkdir -p android/app
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.jks
+          
+          keytool -list -v -keystore android/app/release-key.jks \
+            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} -alias fdroid -q
 
-          # Zapisz klucz w android/app/release-key.p12
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.p12
-
-          # Weryfikacja
-          if [ ! -f android/app/release-key.p12 ]; then
-            echo "BŁĄD: Klucz nie został utworzony!"
-            exit 1
-          fi
-
-          # Test keytool
-          if ! keytool -list -v -keystore android/app/release-key.p12 \
-            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} > keytool_output.txt 2>&1; then
-              echo "BŁĄD: keytool nie może odczytać keystore!"
-              exit 1
-          fi
-
-          if ! grep -q "Alias name: fdroid" keytool_output.txt; then
-            echo "BŁĄD: Alias 'fdroid' nie istnieje!"
-            exit 1
-          fi
-
-          echo "Klucz OK."
-      - name: Patch Metadata & Changelog
+      - name: Init F-Droid Structure (if needed)
         run: |
-          FDROID_METADATA_DIR="$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}/changelogs"
-          mkdir -p "$FDROID_METADATA_DIR"
+          if [ ! -d "fdroid" ]; then
+            mkdir -p fdroid/repo fdroid/metadata
+            fdroid init || true
+          fi
 
-          cd source_code
-          git log -1 --pretty=format:"- %s (%h)" > "$FDROID_METADATA_DIR/${{ env.VERSION_CODE }}.txt"
-
-          METADATA="$Github_WORKSPACE/fdroid/metadata/${{ env.APPID }}.yml"
+      - name: Update Metadata
+        run: |
+          METADATA="$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}.yml"
+          
+          mkdir -p "$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}"
+          
           if [ ! -f "$METADATA" ]; then
             cat > "$METADATA" <<EOF
+          Categories:
+            - Internet
+          License: GPL-3.0-only
+          SourceCode: https://gitlab.com/gnejusz_pompejusz/tomos
+          IssueTracker: https://gitlab.com/gnejusz_pompejusz/tomos/-/issues
           Name: Tomos
           Summary: A philosophical scroll for Librus Synergia
           Description: |
             In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, Tomos emerges as a humble yet defiant tool.
             Crafted in the spirit of ancient Greece, it brings clarity to the bureaucratic labyrinth of grades, messages, and school decrees.
             Unofficial, open-source, and built with Flutter and Riverpod.
-          Categories:
-            - Internet
           RepoType: git
           Repo: https://gitlab.com/gnejusz_pompejusz/tomos.git
-
+          
           Builds:
           EOF
-              fi
+          fi
 
-              if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
-                cat >> "$METADATA" <<EOF
-              - versionName: "${{ env.VERSION_NAME }}"
-                versionCode: ${{ env.VERSION_CODE }}
-                commit: ${{ env.COMMIT }}
-                disable: yes
+          if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
+            cat >> "$METADATA" <<EOF
+            - versionName: ${{ env.VERSION_NAME }}
+              versionCode: ${{ env.VERSION_CODE }}
+              commit: ${{ env.COMMIT }}
+              subdir: source_code
+              gradle:
+                - yes
           EOF
-              fi
+          fi
+
       - name: Update F-Droid Index
         env:
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
         run: |
           cp apks/*.apk fdroid/repo/
           cd fdroid
-          fdroid update --create-metadata --pretty --verbose --use-date-from-apk
+          fdroid update --pretty --verbose
+          fdroid sign --verbose
 
-      - name: Clean & Deploy
-        run: |
-          # Usuwamy wrażliwe pliki przed commitem do GitHub Pages
-          rm -f fdroid/keystore.p12 fdroid/config.yml
-          rm -f source_code/release-key.p12
-
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add fdroid/
-          git commit -m "Release ${{ env.VERSION_NAME }} (build ${{ env.VERSION_CODE }})" || echo "No changes"
-          git push
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./fdroid
+          destination_dir: .
+          keep_files: true
