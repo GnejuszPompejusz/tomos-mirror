@@ -20,6 +20,10 @@ on:
 jobs:
   fdroid:
     runs-on: ubuntu-latest
+    permissions:             # <-- DODAJ TO
+      contents: write
+      pages: write
+      id-token: write
     env:
       APPID: dev.gnejusz.tomos
       GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git"
@@ -29,6 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: false # Wyłącz to tutaj CAŁKOWICIE, bo i tak będziemy klonować ręcznie w kroku "Clone Source & Resolve Version"
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -39,7 +44,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_VERSION || 'stable' }}
           cache: true
 
       - name: Install fdroidserver
@@ -47,6 +52,8 @@ jobs:
           sudo apt update
           sudo apt install -y fdroidserver libglu1-mesa python3-pip
           pip3 install --upgrade fdroidserver
+      - name: Install latest androguard (fixes res1 must be zero error)
+        run: pip3 install --upgrade androguard
 
       - name: Clone Source & Resolve Version
         id: version
@@ -65,89 +72,94 @@ jobs:
             VERSION_CODE=$(grep "version:" pubspec.yaml | head -1 | sed 's/.*+//' || echo "${{ github.run_number }}")
             echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
           fi
-
-      - name: Build Release APK
-        run: |
-          cd source_code
-          flutter pub get
-          flutter build apk --release
-          mkdir -p $GITHUB_WORKSPACE/apks
-          cp build/app/outputs/flutter-apk/app-release.apk $GITHUB_WORKSPACE/apks/${{ env.APPID }}_${{ env.VERSION_CODE }}.apk
-
       - name: Setup Signing
         run: |
           cd source_code
           
           cat > android/keystore.properties <<EOF
-          storePassword=${{ secrets.FDROID_KEYSTORE_PASS }}
-          keyPassword=${{ secrets.FDROID_KEYSTORE_PASS }}
-          keyAlias=fdroid
-          storeFile=release-key.jks
+          KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
+          KEY_ALIAS=fdroid
+          KEYSTORE_PATH=../../release-key.p12
           EOF
 
-          mkdir -p android/app
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-key.jks
-          
-          keytool -list -v -keystore android/app/release-key.jks \
-            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} -alias fdroid -q
 
-      - name: Init F-Droid Structure (if needed)
+          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
+          
+          keytool -list -v -keystore release-key.p12 \
+            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} -alias fdroid
+          # Debug 
+          echo "===== keystore.properties =====" 
+          cat android/keystore.properties
+          echo "===== files in source_code ====="
+          ls -l
+      - name: Build Release APK
         run: |
-          if [ ! -d "fdroid" ]; then
-            mkdir -p fdroid/repo fdroid/metadata
-            fdroid init || true
-          fi
+          cd source_code
+          flutter pub get
+          flutter build apk --release 
+          mkdir -p $GITHUB_WORKSPACE/apks
+          cp build/app/outputs/flutter-apk/app-release.apk $GITHUB_WORKSPACE/apks/${{ env.APPID }}_${{ env.VERSION_CODE }}.apk
+
+      - name: Check APK signature
+        run: |
+          cd source_code
+          apksigner verify --print-certs build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Init F-Droid Structure
+        run: |
+          mkdir -p repo/icons metadata
+          # Tworzymy pustą ikonę, aby fdroid update nie wyrzucał ostrzeżenia
+          touch repo/icons/icon.png
+          
+          # Tworzymy czysty config.yml z POPRAWNYMI nazwami kluczy
+          cat > config.yml <<EOF
+          keystore: "keystore.p12"
+          keystorepass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
+          keypass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
+          keyalias: "fdroid"
+          repo_keyalias: "fdroid"
+          repo_url: "https://gnejuszpompejusz.github.io/tomos-mirror/repo"
+          repo_name: "Tomos Mirror"
+          repo_description: "Repozytorium aplikacji Tomos"
+          EOF
+          # F-Droid wymaga restrykcyjnych uprawnień dla plików z hasłami
+          chmod 600 config.yml
+
+      - name: Setup Repo Signing Key
+        run: cp source_code/release-key.p12 keystore.p12
 
       - name: Update Metadata
         run: |
-          METADATA="$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}.yml"
-          
-          mkdir -p "$GITHUB_WORKSPACE/fdroid/metadata/${{ env.APPID }}"
-          
-          if [ ! -f "$METADATA" ]; then
-            cat > "$METADATA" <<EOF
+          METADATA="metadata/${{ env.APPID }}.yml"
+          cat > "$METADATA" <<EOF
           Categories:
-            - Internet
-          License: GPL-3.0-only
-          SourceCode: https://gitlab.com/gnejusz_pompejusz/tomos
-          IssueTracker: https://gitlab.com/gnejusz_pompejusz/tomos/-/issues
-          Name: Tomos
-          Summary: A philosophical scroll for Librus Synergia
-          Description: |
-            In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, Tomos emerges as a humble yet defiant tool.
-            Crafted in the spirit of ancient Greece, it brings clarity to the bureaucratic labyrinth of grades, messages, and school decrees.
-            Unofficial, open-source, and built with Flutter and Riverpod.
-          RepoType: git
-          Repo: https://gitlab.com/gnejusz_pompejusz/tomos.git
-          
-          Builds:
-          EOF
-          fi
+            - Connectivity
+          License: Unknown
+          SourceCode: ${{ env.GITLAB_URL }}
 
-          if ! grep -q "versionCode: ${{ env.VERSION_CODE }}" "$METADATA"; then
-            cat >> "$METADATA" <<EOF
-            - versionName: ${{ env.VERSION_NAME }}
-              versionCode: ${{ env.VERSION_CODE }}
-              commit: ${{ env.COMMIT }}
-              subdir: source_code
-              gradle:
-                - yes
+          RepoType: git
+          Repo: ${{ env.GITLAB_URL }}
+
+          ArchivePolicy: 3 versions
+          AutoUpdateMode: Version %v
+          UpdateCheckMode: Tags
+          CurrentVersion: ${{ env.VERSION_NAME }}
+          CurrentVersionCode: ${{ env.VERSION_CODE }}
           EOF
-          fi
 
       - name: Update F-Droid Index
         env:
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
         run: |
-          cp apks/*.apk fdroid/repo/
-          cd fdroid
+          cp apks/*.apk repo/
+          # fdroid update automatycznie użyje config.yml i podpisze repozytorium
           fdroid update --pretty --verbose
-          fdroid sign --verbose
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./fdroid
-          destination_dir: .
-          keep_files: true
+          publish_dir: ./repo
+          destination_dir: repo
+          keep_files: false        # Zmień na false na jeden build, żeby WYCZYŚCIĆ śmieci (submoduły widmo)
+          
