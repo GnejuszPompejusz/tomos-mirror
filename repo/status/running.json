@@ -9,10 +9,14 @@
     "--verbose"
   ],
   "disabled": [],
-  "endTimestamp": 1770807564243,
-  "failedBuilds": {},
+  "endTimestamp": 1770809206790,
+  "failedBuilds": {
+    "dev.gnejusz.tomos": [
+      1
+    ]
+  },
   "fdroiddata": {
-    "commitId": "2cce28c908df71cb3910e7047152db2981915de7",
+    "commitId": "609f71ba8893a175674bf31fd98c536df4ace617",
     "isDirty": false,
     "modifiedFiles": [],
     "untrackedFiles": [
@@ -33,16 +37,18 @@
   "noPackages": [
     "dev.gnejusz.tomos"
   ],
-  "noUpdateCheck": [],
+  "noUpdateCheck": [
+    "dev.gnejusz.tomos"
+  ],
   "stages": {
-    "delete_disabled_builds": 1770807560219,
-    "index.make repo": 1770807561194,
-    "prepare_apps repo": 1770807561193,
-    "process_apks": 1770807560220,
-    "read_added_date_from_all_apks": 1770807561193,
-    "remove_apks": 1770807561192,
-    "scan_repo_files": 1770807561192
+    "delete_disabled_builds": 1770809202816,
+    "index.make repo": 1770809203639,
+    "prepare_apps repo": 1770809203638,
+    "process_apks": 1770809202816,
+    "read_added_date_from_all_apks": 1770809203638,
+    "remove_apks": 1770809203638,
+    "scan_repo_files": 1770809203637
   },
-  "startTimestamp": 1770807560000,
+  "startTimestamp": 1770809202000,
   "subcommand": "update"
 }
