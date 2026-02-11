@@ -1,0 +1,12 @@
+In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, *Tomos* emerges as a humble yet defiant tool. Crafted in the spirit of ancient Greece, where Socrates teased truths from the ignorant and Diogenes mocked the pompous with his lantern, *Tomos* dares to bring clarity to the bureaucratic labyrinth of grades, messages, and school decrees. 
+
+Heavily inspired by de la noble librusek — a creation tailored chiefly for the nimble hands of students — *Tomos* extends its reach to the watchful eyes of parents, offering them the same unclouded view into the scholastic machinery.
+
+Yet let it be proclaimed in the marketplace of ideas: *Tomos* is an **unofficial** creation, bearing no affiliation with the Librus company. As of now, it is a work in progress, guided by the sturdy pillars of the Synergic library.
+
+Features:
+- User Management with Avatars
+- Messaging: Fetches snippets and details from the Synergic API
+- School Info: Grades, attendance, and teacher remarks laid bare
+- State Management: Built upon the stable foundation of Riverpod
+- Auto-Login: Swift access to the digital agora

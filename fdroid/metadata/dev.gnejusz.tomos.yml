@@ -28,20 +28,5 @@ Description: |
   - **State Management**: Built upon the stable foundation of Riverpod.
   - **Auto-Login**: Swift access to the digital agora.
 
-# Sekcja Builds: Skrypt w GitHub Actions będzie dopisywał tu nowe wpisy.
-# Zachowujemy pełny szablon tutaj, aby F-Droid wiedział jak budować.
-Builds:
-  - versionName: "0.0.1"
-    versionCode: 1
-    commit: initial
-    subdir: .
-    init: |
-      cp fdroid/keystore.properties android/keystore.properties
-      cp fdroid/release-key.p12 android/release-key.p12
-      flutter pub get
-    gradle:
-      - assembleRelease
-    output: app/build/outputs/apk/release/app-release.apk
-
 AllowedAPKSigningKeys:
-  - 854A92FB6BAA25547FBED4CC9822CC61B47F49A55E362E40672CD04CABEBEA42
+- 1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee
