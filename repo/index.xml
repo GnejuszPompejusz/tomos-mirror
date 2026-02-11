@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fdroid>
-	<repo icon="icon.png" name="Tomos Mirror" pubkey="3082037930820261a0030201020208494887f6e8492991300d06092a864886f70d01010c0500306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a3020170d3236303130393132303731335a180f32303533303532373132303731335a306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a30820122300d06092a864886f70d01010105000382010f003082010a0282010100a0fb5e711619c766897bd152e16dc1a6c7a6273026299f365dc5f31a6d9c8c1be3306b278934faad163884115de3cced0847ae0f5854781a4b94931ba75ce824132a676d3f98ecf1c18e6c1a23a867e95b0fc4b506cc21a631131b670bed755a6d38b37b5e491a1ef385dda3e849172380f843e65f9c3b964ec796adcc6976b7ea98a0c6d9fa652595cca4e734fa4d079792e05380578298a4e4cf132758a9843266d05c355076272a2dde991564e539bd7bcbb8eb872239fac237e8cb1808d309bee5c34553f5a2bb0487acb43a090a954fee8ac0493da1a906cd9af054b6d494bcb0b4b458c6f0f05bc98d742415bf5c5c1b1202aad67cd128c91484454b050203010001a321301f301d0603551d0e041604140ada357c03becbb9e4dd924c54b81818782f735e300d06092a864886f70d01010c050003820101003278e8f40c869b558cbd5fb5fbaa4eddae54f5bfc86252e799f2634b6abf933ea04b5ddb6523e03cc80bd0ce4e89d0b6384aa3096250fd2d17cf72e203dcdf9da4794be424cc3e9f317301e04a5f7601664e892c1b76e24f145e254f4b4e920e18a8afb0ca3a9c87766d833451393922c580616c639e5956abcdfc216f5d941ef5fd5121df7ed220205cfe1a463ba9622dd22cb694a77851b15e45b36c7954d9d3604e375a1c7cfbad6c64149dfb138ddabd491b6d23a72e4311e69ac1dbd29644e9c32e14ad2bcdb7b06575e04c88771cc10e0f244f933151c55d1b597bdb39fff6265297d47e05efd21a5081225d95ae1276a2ef50dbba20d87ac390a99c50" timestamp="1770814290" url="https://gnejuszpompejusz.github.io/tomos-mirror/repo" version="20002">
+	<repo icon="icon.png" name="Tomos Mirror" pubkey="3082037930820261a0030201020208494887f6e8492991300d06092a864886f70d01010c0500306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a3020170d3236303130393132303731335a180f32303533303532373132303731335a306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a30820122300d06092a864886f70d01010105000382010f003082010a0282010100a0fb5e711619c766897bd152e16dc1a6c7a6273026299f365dc5f31a6d9c8c1be3306b278934faad163884115de3cced0847ae0f5854781a4b94931ba75ce824132a676d3f98ecf1c18e6c1a23a867e95b0fc4b506cc21a631131b670bed755a6d38b37b5e491a1ef385dda3e849172380f843e65f9c3b964ec796adcc6976b7ea98a0c6d9fa652595cca4e734fa4d079792e05380578298a4e4cf132758a9843266d05c355076272a2dde991564e539bd7bcbb8eb872239fac237e8cb1808d309bee5c34553f5a2bb0487acb43a090a954fee8ac0493da1a906cd9af054b6d494bcb0b4b458c6f0f05bc98d742415bf5c5c1b1202aad67cd128c91484454b050203010001a321301f301d0603551d0e041604140ada357c03becbb9e4dd924c54b81818782f735e300d06092a864886f70d01010c050003820101003278e8f40c869b558cbd5fb5fbaa4eddae54f5bfc86252e799f2634b6abf933ea04b5ddb6523e03cc80bd0ce4e89d0b6384aa3096250fd2d17cf72e203dcdf9da4794be424cc3e9f317301e04a5f7601664e892c1b76e24f145e254f4b4e920e18a8afb0ca3a9c87766d833451393922c580616c639e5956abcdfc216f5d941ef5fd5121df7ed220205cfe1a463ba9622dd22cb694a77851b15e45b36c7954d9d3604e375a1c7cfbad6c64149dfb138ddabd491b6d23a72e4311e69ac1dbd29644e9c32e14ad2bcdb7b06575e04c88771cc10e0f244f933151c55d1b597bdb39fff6265297d47e05efd21a5081225d95ae1276a2ef50dbba20d87ac390a99c50" timestamp="1770815738" url="https://gnejuszpompejusz.github.io/tomos-mirror/repo" version="20002">
 		<description>Repozytorium aplikacji Tomos</description>
 	</repo>
+	<application id="dev.gnejusz.tomos">
+		<id>dev.gnejusz.tomos</id>
+		<added>2026-02-11</added>
+		<lastupdated>2026-02-11</lastupdated>
+		<name>Tomos</name>
+		<summary>Nieoficjalny klient Librus Synergia w stylu filozoficznego zwoju</summary>
+		<desc>In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, *Tomos* emerges as a humble yet defiant tool. Crafted in the spirit of ancient Greece, where Socrates teased truths from the ignorant and Diogenes mocked the pompous with his lantern, *Tomos* dares to bring clarity to the bureaucratic labyrinth of grades, messages, and school decrees. Heavily inspired by de la noble [librusek](https://github.com/SimonB50/librusek/) — a creation tailored chiefly for the nimble hands of students — *Tomos* extends its reach to the watchful eyes of parents, offering them the same unclouded view into the scholastic machinery.  
+
+Yet let it be proclaimed in the marketplace of ideas: *Tomos* is an **unofficial** creation, bearing no affiliation with the Librus company, and owing its existence solely to the curiosity and craft of independent minds. As of now, it is a work in progress — a vessel still leaking in places, with many a bug lurking in its timbers — but one that sails boldly toward the horizon, guided by the sturdy pillars of the [**Synergic**](https://gitlab.com/gnejusz_pompejusz/synergic) library, ever evolving like Plato’s eternal Forms, perfect in idea if not yet in execution.
+
+Forged in the fires of **Flutter**, that cross-platform muse of developers, *Tomos* dances across devices with the grace of Terpsichore, delivering its wisdom to Android, iOS, and the web. Tested on Android and Windows, it strides confidently on these platforms, while its web incarnation, though possible, requires the brave to tame the hydra of CORS (Cross-Origin Resource Sharing). Like Zeno’s arrow, it moves forward in paradoxical increments, its full potential tantalizingly close yet tethered to the mortal coil of code.
+
+Features: The Labors of Tomos
+
+- **User Management with Avatars**: Multiple user accounts, each adorned with a custom avatar.
+- **Messaging**: Fetches snippets and details from the Synergic API.
+- **School Info**: Grades, attendance, and teacher remarks laid bare.
+- **State Management**: Built upon the stable foundation of Riverpod.
+- **Auto-Login**: Swift access to the digital agora.
+</desc>
+		<license>MIT</license>
+		<categories>Education</categories>
+		<category>Education</category>
+		<web></web>
+		<source>https://gitlab.com/gnejusz_pompejusz/tomos</source>
+		<tracker>https://gitlab.com/gnejusz_pompejusz/tomos/-/issues</tracker>
+		<author>Gnejusz Pompejusz</author>
+		<marketversion></marketversion>
+		<marketvercode>2</marketvercode>
+		<package>
+			<version>0.1.0</version>
+			<versioncode>2</versioncode>
+			<apkname>dev.gnejusz.tomos_1.apk</apkname>
+			<hash type="sha256">e90d59e221cb0697f6eafd7e8d09943ab1f8961c9849c45e33b05ffe256828f0</hash>
+			<size>64281514</size>
+			<sdkver>24</sdkver>
+			<targetSdkVersion>36</targetSdkVersion>
+			<added>2026-02-11</added>
+			<sig>ec8757acc578086121cf6c26fddd936d</sig>
+			<permissions>INTERNET,dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION</permissions>
+			<nativecode>arm64-v8a,armeabi-v7a,x86_64</nativecode>
+		</package>
+	</application>
 </fdroid>
