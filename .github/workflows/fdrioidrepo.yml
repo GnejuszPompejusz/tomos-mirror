@@ -130,27 +130,32 @@ jobs:
 
       - name: Update Metadata
         run: |
-          mkdir -p metadata/${{ env.APPID }}/en-US/images/screenshots
-          mkdir -p repo/icons-160
-
-          # 1. Kopiujemy Twój bogaty opis z folderu źródłowego do katalogu roboczego F-Droida
+          APP_DIR="metadata/${{ env.APPID }}"
+          # Tworzymy strukturę Fastlane
+          mkdir -p $APP_DIR/en-US/images
+          
+          # 1. Kopiujemy plik główny .yml
           cp fdroid/metadata/${{ env.APPID }}.yml metadata/${{ env.APPID }}.yml
           
-          # 2. Używamy 'sed', aby podmienić wersje na te aktualnie zbudowane
-          # To sprawi, że w aplikacji F-Droid zawsze będzie widać poprawny numer
+          # 2. Czyścimy opis w .yml, żeby nie gryzł się z Fastlane (opcjonalne, ale zalecane)
+          # F-Droid priorytetyzuje pliki .txt nad polem Description w .yml
+          
+          # 3. Kopiujemy grafikę i ikonę (WAŻNE: ikona musi być PNG)
+          cp source_code/assets/icons/icon.png $APP_DIR/en-US/images/icon.png
+          
+          # 4. Kopiujemy ikonę do głównego folderu repozytorium (dla starych klientów)
+          mkdir -p repo/icons-160
+          cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
+          
+          # 5. Tworzymy pliki tekstowe dla opisu (Fastlane style)
+          # Jeśli masz je w folderze fdroid/metadata w repo, po prostu je skopiuj:
+          if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
+            cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
+          fi
+
+          # 6. Aktualizacja wersji w .yml (sed)
           sed -i "s/CurrentVersion:.*/CurrentVersion: ${{ env.VERSION_NAME }}/" metadata/${{ env.APPID }}.yml
           sed -i "s/CurrentVersionCode:.*/CurrentVersionCode: ${{ env.VERSION_CODE }}/" metadata/${{ env.APPID }}.yml
-          # 3. Skopiuj opisy i grafikę z Twojego katalogu źródłowego
-        
-          cp -a fdroid/metadata/${{ env.APPID }}/en-US/. metadata/${{ env.APPID }}/en-US/
-          
-          # 4. Upewnij się, że ikona jest tam, gdzie F-Droid jej szuka (w images/)
-          # Jeśli masz ikonę w assets, skopiuj ją do struktury Fastlane
-          cp source_code/assets/icons/icon.png metadata/${{ env.APPID }}/en-US/images/icon.png
-          
-          # Dodatkowo warto skopiować ikonę do folderu repo (klasyczna metoda)
-          cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
-
       - name: Update F-Droid Index
         env:
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}

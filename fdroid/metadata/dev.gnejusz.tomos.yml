@@ -11,22 +11,6 @@ RepoType: git
 Repo: https://gitlab.com/gnejusz_pompejusz/tomos.git
 
 AutoName: Tomos
-Summary: Nieoficjalny klient Librus Synergia w stylu filozoficznego zwoju
-
-Description: |
-  In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, *Tomos* emerges as a humble yet defiant tool. Crafted in the spirit of ancient Greece, where Socrates teased truths from the ignorant and Diogenes mocked the pompous with his lantern, *Tomos* dares to bring clarity to the bureaucratic labyrinth of grades, messages, and school decrees. Heavily inspired by de la noble [librusek](https://github.com/SimonB50/librusek/) — a creation tailored chiefly for the nimble hands of students — *Tomos* extends its reach to the watchful eyes of parents, offering them the same unclouded view into the scholastic machinery.  
-
-  Yet let it be proclaimed in the marketplace of ideas: *Tomos* is an **unofficial** creation, bearing no affiliation with the Librus company, and owing its existence solely to the curiosity and craft of independent minds. As of now, it is a work in progress — a vessel still leaking in places, with many a bug lurking in its timbers — but one that sails boldly toward the horizon, guided by the sturdy pillars of the [**Synergic**](https://gitlab.com/gnejusz_pompejusz/synergic) library, ever evolving like Plato’s eternal Forms, perfect in idea if not yet in execution.
-
-  Forged in the fires of **Flutter**, that cross-platform muse of developers, *Tomos* dances across devices with the grace of Terpsichore, delivering its wisdom to Android, iOS, and the web. Tested on Android and Windows, it strides confidently on these platforms, while its web incarnation, though possible, requires the brave to tame the hydra of CORS (Cross-Origin Resource Sharing). Like Zeno’s arrow, it moves forward in paradoxical increments, its full potential tantalizingly close yet tethered to the mortal coil of code.
-
-  Features: The Labors of Tomos
-
-  - **User Management with Avatars**: Multiple user accounts, each adorned with a custom avatar.
-  - **Messaging**: Fetches snippets and details from the Synergic API.
-  - **School Info**: Grades, attendance, and teacher remarks laid bare.
-  - **State Management**: Built upon the stable foundation of Riverpod.
-  - **Auto-Login**: Swift access to the digital agora.
 
 AllowedAPKSigningKeys:
 - 1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee
