@@ -1,0 +1,81 @@
+{
+  "repo": {
+    "name": {
+      "en-US": "Tomos Mirror"
+    },
+    "description": {
+      "en-US": "Repozytorium aplikacji Tomos"
+    },
+    "icon": {
+      "en-US": {
+        "name": "/icons/icon.png",
+        "sha256": "20ae648a114dc4e5d71332f5ebdf946aa4525bc469a95c8dcfed5742a14a2dad",
+        "size": 825
+      }
+    },
+    "address": "https://gnejuszpompejusz.github.io/tomos-mirror/repo",
+    "timestamp": 1770807561000,
+    "categories": {
+      "Connectivity": {
+        "name": {
+          "en-US": "Connectivity"
+        }
+      }
+    }
+  },
+  "packages": {
+    "dev.gnejusz.tomos": {
+      "metadata": {
+        "added": 1770807561000,
+        "categories": [
+          "Connectivity"
+        ],
+        "lastUpdated": 1770807561000,
+        "sourceCode": "https://gitlab.com/gnejusz_pompejusz/tomos.git",
+        "name": {
+          "en-US": "tomos"
+        },
+        "preferredSigner": "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+      },
+      "versions": {
+        "97aa837bedc06780318fbc5bbe87ecbe8209bd50a6995917750acc8fdab334f6": {
+          "added": 1770807561000,
+          "file": {
+            "name": "/dev.gnejusz.tomos_1.apk",
+            "sha256": "97aa837bedc06780318fbc5bbe87ecbe8209bd50a6995917750acc8fdab334f6",
+            "size": 64281514
+          },
+          "manifest": {
+            "nativecode": [
+              "arm64-v8a",
+              "armeabi-v7a",
+              "x86_64"
+            ],
+            "versionName": "0.1.0",
+            "versionCode": 2,
+            "usesSdk": {
+              "minSdkVersion": 24,
+              "targetSdkVersion": 36
+            },
+            "signer": {
+              "sha256": [
+                "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+              ]
+            },
+            "usesPermission": [
+              {
+                "name": "android.permission.INTERNET"
+              },
+              {
+                "name": "dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+              }
+            ]
+          },
+          "releaseChannels": [
+            "Beta"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "repo": {
+    "timestamp": 1770807561000,
+    "version": 20002,
+    "name": "Tomos Mirror",
+    "icon": "icon.png",
+    "address": "https://gnejuszpompejusz.github.io/tomos-mirror/repo",
+    "description": "Repozytorium aplikacji Tomos"
+  },
+  "requests": {
+    "install": [],
+    "uninstall": []
+  },
+  "apps": [
+    {
+      "categories": [
+        "Connectivity"
+      ],
+      "suggestedVersionName": "1",
+      "suggestedVersionCode": "1",
+      "license": "Unknown",
+      "sourceCode": "https://gitlab.com/gnejusz_pompejusz/tomos.git",
+      "added": 1770807561000,
+      "packageName": "dev.gnejusz.tomos",
+      "lastUpdated": 1770807561000,
+      "localized": {
+        "en-US": {
+          "name": "tomos"
+        }
+      }
+    }
+  ],
+  "packages": {
+    "dev.gnejusz.tomos": [
+      {
+        "added": 1770807561000,
+        "apkName": "dev.gnejusz.tomos_1.apk",
+        "hash": "97aa837bedc06780318fbc5bbe87ecbe8209bd50a6995917750acc8fdab334f6",
+        "hashType": "sha256",
+        "minSdkVersion": 24,
+        "nativecode": [
+          "arm64-v8a",
+          "armeabi-v7a",
+          "x86_64"
+        ],
+        "packageName": "dev.gnejusz.tomos",
+        "sig": "ec8757acc578086121cf6c26fddd936d",
+        "signer": "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee",
+        "size": 64281514,
+        "targetSdkVersion": 36,
+        "uses-permission": [
+          [
+            "android.permission.INTERNET",
+            null
+          ],
+          [
+            "dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            null
+          ]
+        ],
+        "versionCode": 2,
+        "versionName": "0.1.0"
+      }
+    ]
+  }
+}

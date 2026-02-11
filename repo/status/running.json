@@ -1,0 +1,48 @@
+{
+  "/etc/issue.net": "Ubuntu 24.04.3 LTS",
+  "antiFeatures": {},
+  "apksigner": "/usr/bin/apksigner",
+  "archivePolicy0": [],
+  "commandLine": [
+    "/home/runner/.local/bin/fdroid update",
+    "--pretty",
+    "--verbose"
+  ],
+  "disabled": [],
+  "endTimestamp": 1770807564243,
+  "failedBuilds": {},
+  "fdroiddata": {
+    "commitId": "2cce28c908df71cb3910e7047152db2981915de7",
+    "isDirty": false,
+    "modifiedFiles": [],
+    "untrackedFiles": [
+      "apks/dev.gnejusz.tomos_1.apk",
+      "config.yml",
+      "keystore.p12",
+      "metadata/dev.gnejusz.tomos.yml",
+      "repo/dev.gnejusz.tomos_1.apk",
+      "repo/icons/icon.png",
+      "source_code/"
+    ]
+  },
+  "jarsigner": "/usr/lib/jvm/java-21-openjdk-amd64/bin/jarsigner",
+  "keytool": "/usr/lib/jvm/java-21-openjdk-amd64/bin/keytool",
+  "needsUpdate": [
+    "dev.gnejusz.tomos"
+  ],
+  "noPackages": [
+    "dev.gnejusz.tomos"
+  ],
+  "noUpdateCheck": [],
+  "stages": {
+    "delete_disabled_builds": 1770807560219,
+    "index.make repo": 1770807561194,
+    "prepare_apps repo": 1770807561193,
+    "process_apks": 1770807560220,
+    "read_added_date_from_all_apks": 1770807561193,
+    "remove_apks": 1770807561192,
+    "scan_repo_files": 1770807561192
+  },
+  "startTimestamp": 1770807560000,
+  "subcommand": "update"
+}
