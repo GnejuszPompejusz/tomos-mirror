@@ -9,14 +9,10 @@
     "--verbose"
   ],
   "disabled": [],
-  "endTimestamp": 1770810727610,
-  "failedBuilds": {
-    "dev.gnejusz.tomos": [
-      1
-    ]
-  },
+  "endTimestamp": 1770814293185,
+  "failedBuilds": {},
   "fdroiddata": {
-    "commitId": "c7f798c4331b74751346a0ac22d1453970067749",
+    "commitId": "a1eb744b49eb218a70fc02695d0a9780f1f5875b",
     "isDirty": false,
     "modifiedFiles": [],
     "untrackedFiles": [
@@ -24,7 +20,12 @@
       "config.yml",
       "keystore.p12",
       "metadata/dev.gnejusz.tomos.yml",
+      "metadata/dev.gnejusz.tomos/en-US/full_description.txt",
+      "metadata/dev.gnejusz.tomos/en-US/images/icon.png",
+      "metadata/dev.gnejusz.tomos/en-US/summary.txt",
+      "metadata/dev.gnejusz.tomos/en-US/title.txt",
       "repo/dev.gnejusz.tomos_1.apk",
+      "repo/icons-160/dev.gnejusz.tomos.png",
       "repo/icons/icon.png",
       "source_code/"
     ]
@@ -41,14 +42,14 @@
     "dev.gnejusz.tomos"
   ],
   "stages": {
-    "delete_disabled_builds": 1770810723680,
-    "index.make repo": 1770810724463,
-    "prepare_apps repo": 1770810724462,
-    "process_apks": 1770810723680,
-    "read_added_date_from_all_apks": 1770810724462,
-    "remove_apks": 1770810724461,
-    "scan_repo_files": 1770810724461
+    "delete_disabled_builds": 1770814288981,
+    "index.make repo": 1770814290024,
+    "prepare_apps repo": 1770814290023,
+    "process_apks": 1770814288981,
+    "read_added_date_from_all_apks": 1770814290022,
+    "remove_apks": 1770814290022,
+    "scan_repo_files": 1770814290021
   },
-  "startTimestamp": 1770810723000,
+  "startTimestamp": 1770814288000,
   "subcommand": "update"
 }
