@@ -1,1 +1,52 @@
-Initial release of the philosophical scroll.
+VERSION 0.2.0 – 2026-02-07
+
+ADDED
+- Calendar System (Modular Plugin Architecture):
+  • Weekly and daily calendar views with unified timeline and multiple event sources.  
+  • Trips module (/trips) with transport indicators, status badges, and calendar integration.  
+  • Teacher absences with continuation markers, substitution details, and visibility toggles.  
+  • Current time indicator with live position marker.  
+  • Configurable layout for sources, weekday visibility, and hour ranges.
+- Grades System:
+  • Dedicated grades screen (/grades) with period filtering, custom date ranges, and subject grouping.  
+  • Grade statistics with skill/category breakdowns and numeric/descriptive grade support.  
+  • Unified grade details with metadata, weights, skills, and categories.
+- Attendance Enhancements:
+  • Redesigned statistics dashboard with charts and segmented progress bars.  
+  • Custom grouping rules via AttendanceGroupingConfig.
+- Cache Statistics and Debug Tools:
+  • Cache stats screen (/statistics/cache) with real-time metrics and status badges.  
+  • Repository aggregation via allRepositoriesProvider.  
+  • Global cache and protection overview including total requests, hits/misses, backend calls, deduplication savings, and alerts.
+- Navigation and UX:
+  • Unified bottom sheet pattern (UnifiedDetailsScaffold).  
+  • Enhanced drawer menu.  
+  • Settings overhaul with new "Calendar Sources" section.
+
+CHANGED
+- Architecture overhaul to Domain-Driven Design (Use-Case → Repository → Result<T>).  
+- Refactored data flow to Result-based model.  
+- Updated attendance logic with configurable rules and accessibility improvements.  
+- Updated typography to Noto Serif / Libre Baskerville.  
+- Standardized event cards and grade circles using SnippetCard and CompactGradeCircle.
+
+FIXED
+- Calendar synchronization race conditions.  
+- Attendance loading sequence to prevent UI flicker.  
+- UI glitches including time indicator clipping and event overlap.  
+- Corrected weighted average calculations for final/semester grades.
+
+DEPENDENCIES
+- Updated: analyzer 85.0.0, intl 0.20.2, collection 1.18.0, path 1.9.1.  
+- New: go_router, very_good_analysis.  
+- SDK upgraded to Synergic SDK v0.1.1 (Pantalons).
+
+---
+
+VERSION 0.1.0 – 2025-xx-xx
+
+ADDED
+- Project initialization and modular structure.  
+- Support for multiple user accounts.  
+- Basic messaging (reading and sending).  
+- User authentication and profile management foundations.
