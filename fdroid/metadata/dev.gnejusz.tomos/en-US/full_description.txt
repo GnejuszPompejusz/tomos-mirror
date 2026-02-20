@@ -1,12 +1,24 @@
-In the grand agora of modern education, where the Polish platform Librus Synergia reigns like an oracle both revered and confounding, *Tomos* emerges as a humble yet defiant tool. Crafted in the spirit of ancient Greece, where Socrates teased truths from the ignorant and Diogenes mocked the pompous with his lantern, *Tomos* dares to bring clarity to the bureaucratic labyrinth of grades, messages, and school decrees. 
+<p>
+Tomos is an unofficial client for the Polish Librus Synergia platform, created to bring clarity to grades, messages, attendance and school information. Inspired by the student-focused project librusek, Tomos extends its functionality to parents as well, offering a clear and accessible view into the daily school environment. It is built on top of the Synergic library and developed using Flutter.
+</p>
 
-Heavily inspired by de la noble librusek — a creation tailored chiefly for the nimble hands of students — *Tomos* extends its reach to the watchful eyes of parents, offering them the same unclouded view into the scholastic machinery.
+<p>
+Tomos is not affiliated with the Librus company. It is a work in progress and may contain bugs, but continues to evolve with each release.
+</p>
 
-Yet let it be proclaimed in the marketplace of ideas: *Tomos* is an **unofficial** creation, bearing no affiliation with the Librus company. As of now, it is a work in progress, guided by the sturdy pillars of the Synergic library.
+<p><b>Features:</b></p>
+<ul>
+  <li><b>Unified Synergic Feed</b>: Recent grades, messages, absences and teacher substitutions in one place.</li>
+  <li><b>Attendance Overview</b>: Detailed attendance records with percentage calculations for each subject.</li>
+  <li><b>Grades</b>: A clear and structured view of academic results.</li>
+  <li><b>School Trips</b>: Information about upcoming school trips and excursions.</li>
+  <li><b>Messaging</b>: Fetching message snippets and full message details from the Synergic API.</li>
+  <li><b>User Management</b>: Support for multiple accounts, each with a custom avatar.</li>
+  <li><b>Auto‑Login</b>: Quick access without re-entering credentials.</li>
+  <li><b>Cross‑Platform Foundation</b>: Built with Flutter; tested on Android and Windows. Web version possible with proper CORS configuration.</li>
+  <li><b>State Management</b>: Powered by Riverpod for predictable and stable behavior.</li>
+</ul>
 
-Features:
-- User Management with Avatars
-- Messaging: Fetches snippets and details from the Synergic API
-- School Info: Grades, attendance, and teacher remarks laid bare
-- State Management: Built upon the stable foundation of Riverpod
-- Auto-Login: Swift access to the digital agora
+<p>
+Tomos is developed as a single‑author project and combines both experimental and enterprise‑grade architectural elements. The UI is actively evolving and may vary between screens as part of ongoing design exploration.
+</p>
