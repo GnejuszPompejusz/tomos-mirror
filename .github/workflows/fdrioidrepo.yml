@@ -20,7 +20,7 @@ on:
 jobs:
   fdroid:
     runs-on: ubuntu-latest
-    permissions:             # <-- DODAJ TO
+    permissions:            
       contents: write
       pages: write
       id-token: write
@@ -170,5 +170,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./repo
           destination_dir: repo
-          keep_files: false        
+          keep_files: false
+          force_orphan: true        
           
