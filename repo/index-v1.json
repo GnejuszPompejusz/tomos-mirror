@@ -1,0 +1,80 @@
+{
+  "repo": {
+    "timestamp": 1771582537000,
+    "version": 20002,
+    "name": "Tomos Mirror",
+    "icon": "icon.png",
+    "address": "https://gnejuszpompejusz.github.io/tomos-mirror/repo",
+    "description": "Repozytorium aplikacji Tomos"
+  },
+  "requests": {
+    "install": [],
+    "uninstall": []
+  },
+  "apps": [
+    {
+      "allowedAPKSigningKeys": [
+        "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+      ],
+      "authorName": "Gnejusz Pompejusz",
+      "categories": [
+        "Education"
+      ],
+      "suggestedVersionCode": "1",
+      "issueTracker": "https://gitlab.com/gnejusz_pompejusz/tomos/-/issues",
+      "license": "MIT",
+      "sourceCode": "https://gitlab.com/gnejusz_pompejusz/tomos",
+      "added": 1771582537000,
+      "packageName": "dev.gnejusz.tomos",
+      "lastUpdated": 1771582537000,
+      "localized": {
+        "en-US": {
+          "description": "<p>\nTomos is an unofficial client for the Polish Librus Synergia platform, created to bring clarity to grades, messages, attendance and school information. Inspired by the student-focused project librusek, Tomos extends its functionality to parents as well, offering a clear and accessible view into the daily school environment. It is built on top of the Synergic library and developed using Flutter.\n</p>\n\n<p>\nTomos is not affiliated with the Librus company. It is a work in progress and may contain bugs, but continues to evolve with each release.\n</p>\n\n<p><b>Features:</b></p>\n<ul>\n  <li><b>Unified Synergic Feed</b>: Recent grades, messages, absences and teacher substitutions in one place.</li>\n  <li><b>Attendance Overview</b>: Detailed attendance records with percentage calculations for each subject.</li>\n  <li><b>Grades</b>: A clear and structured view of academic results.</li>\n  <li><b>School Trips</b>: Information about upcoming school trips and excursions.</li>\n  <li><b>Messaging</b>: Fetching message snippets and full message details from the Synergic API.</li>\n  <li><b>User Management</b>: Support for multiple accounts, each with a custom avatar.</li>\n  <li><b>Auto\u2011Login</b>: Quick access without re-entering credentials.</li>\n  <li><b>Cross\u2011Platform Foundation</b>: Built with Flutter; tested on Android and Windows. Web version possible with proper CORS configuration.</li>\n  <li><b>State Management</b>: Powered by Riverpod for predictable and stable behavior.</li>\n</ul>\n\n<p>\nTomos is developed as a single\u2011author project and combines both experimental and enterprise\u2011grade architectural elements. The UI is actively evolving and may vary between screens as part of ongoing design exploration.\n</p>\n",
+          "icon": "icon_7R3BWaJMbpCUYLW6fIWBTmxN6ERb7sLka9LUNS0L7NY=.png",
+          "name": "Tomos",
+          "phoneScreenshots": [
+            "screenshot1.png",
+            "screenshot2.png",
+            "screenshot3.png",
+            "screenshot4.png",
+            "screenshot5.png"
+          ],
+          "summary": "Nieoficjalny hobbysticzny klient Librus Synergia"
+        }
+      }
+    }
+  ],
+  "packages": {
+    "dev.gnejusz.tomos": [
+      {
+        "added": 1771582537000,
+        "apkName": "dev.gnejusz.tomos_2.apk",
+        "hash": "07dfef34dae6821439ec4f953ae51e84be418c1149f4ed318f736b7cf56059bc",
+        "hashType": "sha256",
+        "minSdkVersion": 24,
+        "nativecode": [
+          "arm64-v8a",
+          "armeabi-v7a",
+          "x86_64"
+        ],
+        "packageName": "dev.gnejusz.tomos",
+        "sig": "ec8757acc578086121cf6c26fddd936d",
+        "signer": "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee",
+        "size": 65265447,
+        "targetSdkVersion": 36,
+        "uses-permission": [
+          [
+            "android.permission.INTERNET",
+            null
+          ],
+          [
+            "dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            null
+          ]
+        ],
+        "versionCode": 1,
+        "versionName": "0.2.0"
+      }
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "/etc/issue.net": "Ubuntu 24.04.3 LTS",
+  "antiFeatures": {},
+  "apksigner": "/usr/bin/apksigner",
+  "archivePolicy0": [],
+  "commandLine": [
+    "/home/runner/.local/bin/fdroid update",
+    "--pretty",
+    "--verbose"
+  ],
+  "disabled": [],
+  "endTimestamp": 1771582540744,
+  "failedBuilds": {},
+  "fdroiddata": {
+    "commitId": "1f59c896541825627cdd814b14c8d61913209e00",
+    "isDirty": false,
+    "modifiedFiles": [],
+    "untrackedFiles": [
+      "apks/dev.gnejusz.tomos_2.apk",
+      "config.yml",
+      "keystore.p12",
+      "metadata/dev.gnejusz.tomos.yml",
+      "metadata/dev.gnejusz.tomos/en-US/full_description.txt",
+      "metadata/dev.gnejusz.tomos/en-US/images/icon.png",
+      "metadata/dev.gnejusz.tomos/en-US/images/phoneScreenshots/screenshot1.png",
+      "metadata/dev.gnejusz.tomos/en-US/images/phoneScreenshots/screenshot2.png",
+      "metadata/dev.gnejusz.tomos/en-US/images/phoneScreenshots/screenshot3.png",
+      "metadata/dev.gnejusz.tomos/en-US/images/phoneScreenshots/screenshot4.png",
+      "metadata/dev.gnejusz.tomos/en-US/images/phoneScreenshots/screenshot5.png",
+      "metadata/dev.gnejusz.tomos/en-US/summary.txt",
+      "metadata/dev.gnejusz.tomos/en-US/title.txt",
+      "repo/dev.gnejusz.tomos_2.apk",
+      "repo/icons-160/dev.gnejusz.tomos.png",
+      "repo/icons/icon.png",
+      "source_code/"
+    ]
+  },
+  "jarsigner": "/usr/lib/jvm/java-21-openjdk-amd64/bin/jarsigner",
+  "keytool": "/usr/lib/jvm/java-21-openjdk-amd64/bin/keytool",
+  "needsUpdate": [
+    "dev.gnejusz.tomos"
+  ],
+  "noPackages": [
+    "dev.gnejusz.tomos"
+  ],
+  "noUpdateCheck": [
+    "dev.gnejusz.tomos"
+  ],
+  "stages": {
+    "delete_disabled_builds": 1771582536161,
+    "index.make repo": 1771582537794,
+    "prepare_apps repo": 1771582537172,
+    "process_apks": 1771582536162,
+    "read_added_date_from_all_apks": 1771582537172,
+    "remove_apks": 1771582537172,
+    "scan_repo_files": 1771582537171
+  },
+  "startTimestamp": 1771582535000,
+  "subcommand": "update"
+}

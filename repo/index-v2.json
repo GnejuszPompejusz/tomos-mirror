@@ -1,0 +1,125 @@
+{
+  "repo": {
+    "name": {
+      "en-US": "Tomos Mirror"
+    },
+    "description": {
+      "en-US": "Repozytorium aplikacji Tomos"
+    },
+    "icon": {
+      "en-US": {
+        "name": "/icons/icon.png",
+        "sha256": "20ae648a114dc4e5d71332f5ebdf946aa4525bc469a95c8dcfed5742a14a2dad",
+        "size": 825
+      }
+    },
+    "address": "https://gnejuszpompejusz.github.io/tomos-mirror/repo",
+    "timestamp": 1771582537000,
+    "categories": {
+      "Education": {
+        "name": {
+          "en-US": "Education"
+        }
+      }
+    }
+  },
+  "packages": {
+    "dev.gnejusz.tomos": {
+      "metadata": {
+        "added": 1771582537000,
+        "categories": [
+          "Education"
+        ],
+        "issueTracker": "https://gitlab.com/gnejusz_pompejusz/tomos/-/issues",
+        "lastUpdated": 1771582537000,
+        "license": "MIT",
+        "sourceCode": "https://gitlab.com/gnejusz_pompejusz/tomos",
+        "screenshots": {
+          "phone": {
+            "en-US": [
+              {
+                "name": "/dev.gnejusz.tomos/en-US/phoneScreenshots/screenshot1.png",
+                "sha256": "68efca89c696345c84c8bb4b09b602d28aeb7f089f0c1811b1ea74adfd3f26a7",
+                "size": 31904
+              },
+              {
+                "name": "/dev.gnejusz.tomos/en-US/phoneScreenshots/screenshot2.png",
+                "sha256": "013e51f3c41c29e1179033cbae4845016f25fe94226cc77b7156699d99876f8d",
+                "size": 44572
+              },
+              {
+                "name": "/dev.gnejusz.tomos/en-US/phoneScreenshots/screenshot3.png",
+                "sha256": "49f9b02f4a37c3307f1dc6bf1379e96256ba5138e04ca1a86d0b5461d29cdddb",
+                "size": 130237
+              },
+              {
+                "name": "/dev.gnejusz.tomos/en-US/phoneScreenshots/screenshot4.png",
+                "sha256": "85bdf75f3ee2c0be2eb61b4cd8b0f5fa7fc9ae8f51f915eab712069c30414cf0",
+                "size": 93460
+              },
+              {
+                "name": "/dev.gnejusz.tomos/en-US/phoneScreenshots/screenshot5.png",
+                "sha256": "87db75661b3c4573981a633d8135b818df01e048ef9c97fa178d85ca6a9f0199",
+                "size": 62475
+              }
+            ]
+          }
+        },
+        "authorName": "Gnejusz Pompejusz",
+        "name": {
+          "en-US": "Tomos"
+        },
+        "summary": {
+          "en-US": "Nieoficjalny hobbysticzny klient Librus Synergia"
+        },
+        "description": {
+          "en-US": "<p>\nTomos is an unofficial client for the Polish Librus Synergia platform, created to bring clarity to grades, messages, attendance and school information. Inspired by the student-focused project librusek, Tomos extends its functionality to parents as well, offering a clear and accessible view into the daily school environment. It is built on top of the Synergic library and developed using Flutter.\n</p>\n\n<p>\nTomos is not affiliated with the Librus company. It is a work in progress and may contain bugs, but continues to evolve with each release.\n</p>\n\n<p><b>Features:</b></p>\n<ul>\n  <li><b>Unified Synergic Feed</b>: Recent grades, messages, absences and teacher substitutions in one place.</li>\n  <li><b>Attendance Overview</b>: Detailed attendance records with percentage calculations for each subject.</li>\n  <li><b>Grades</b>: A clear and structured view of academic results.</li>\n  <li><b>School Trips</b>: Information about upcoming school trips and excursions.</li>\n  <li><b>Messaging</b>: Fetching message snippets and full message details from the Synergic API.</li>\n  <li><b>User Management</b>: Support for multiple accounts, each with a custom avatar.</li>\n  <li><b>Auto‑Login</b>: Quick access without re-entering credentials.</li>\n  <li><b>Cross‑Platform Foundation</b>: Built with Flutter; tested on Android and Windows. Web version possible with proper CORS configuration.</li>\n  <li><b>State Management</b>: Powered by Riverpod for predictable and stable behavior.</li>\n</ul>\n\n<p>\nTomos is developed as a single‑author project and combines both experimental and enterprise‑grade architectural elements. The UI is actively evolving and may vary between screens as part of ongoing design exploration.\n</p>\n"
+        },
+        "icon": {
+          "en-US": {
+            "name": "/dev.gnejusz.tomos/en-US/icon_7R3BWaJMbpCUYLW6fIWBTmxN6ERb7sLka9LUNS0L7NY=.png",
+            "sha256": "ed1dc159a24c6e909460b5ba7c85814e6c4de8445beec2e46bd2d4352d0becd6",
+            "size": 26873
+          }
+        },
+        "preferredSigner": "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+      },
+      "versions": {
+        "07dfef34dae6821439ec4f953ae51e84be418c1149f4ed318f736b7cf56059bc": {
+          "added": 1771582537000,
+          "file": {
+            "name": "/dev.gnejusz.tomos_2.apk",
+            "sha256": "07dfef34dae6821439ec4f953ae51e84be418c1149f4ed318f736b7cf56059bc",
+            "size": 65265447
+          },
+          "manifest": {
+            "nativecode": [
+              "arm64-v8a",
+              "armeabi-v7a",
+              "x86_64"
+            ],
+            "versionName": "0.2.0",
+            "versionCode": 1,
+            "usesSdk": {
+              "minSdkVersion": 24,
+              "targetSdkVersion": 36
+            },
+            "signer": {
+              "sha256": [
+                "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+              ]
+            },
+            "usesPermission": [
+              {
+                "name": "android.permission.INTERNET"
+              },
+              {
+                "name": "dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

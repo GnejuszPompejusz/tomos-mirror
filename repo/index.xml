@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fdroid>
+	<repo icon="icon.png" name="Tomos Mirror" pubkey="3082037930820261a0030201020208494887f6e8492991300d06092a864886f70d01010c0500306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a3020170d3236303130393132303731335a180f32303533303532373132303731335a306a310b300906035504061302504c310f300d060355040813064c61636a756d310d300b06035504071304526f6d613110300e060355040a130750726976617465310d300b060355040b130453505152311a301806035504031311476e656a75737a20506f6d70656a75737a30820122300d06092a864886f70d01010105000382010f003082010a0282010100a0fb5e711619c766897bd152e16dc1a6c7a6273026299f365dc5f31a6d9c8c1be3306b278934faad163884115de3cced0847ae0f5854781a4b94931ba75ce824132a676d3f98ecf1c18e6c1a23a867e95b0fc4b506cc21a631131b670bed755a6d38b37b5e491a1ef385dda3e849172380f843e65f9c3b964ec796adcc6976b7ea98a0c6d9fa652595cca4e734fa4d079792e05380578298a4e4cf132758a9843266d05c355076272a2dde991564e539bd7bcbb8eb872239fac237e8cb1808d309bee5c34553f5a2bb0487acb43a090a954fee8ac0493da1a906cd9af054b6d494bcb0b4b458c6f0f05bc98d742415bf5c5c1b1202aad67cd128c91484454b050203010001a321301f301d0603551d0e041604140ada357c03becbb9e4dd924c54b81818782f735e300d06092a864886f70d01010c050003820101003278e8f40c869b558cbd5fb5fbaa4eddae54f5bfc86252e799f2634b6abf933ea04b5ddb6523e03cc80bd0ce4e89d0b6384aa3096250fd2d17cf72e203dcdf9da4794be424cc3e9f317301e04a5f7601664e892c1b76e24f145e254f4b4e920e18a8afb0ca3a9c87766d833451393922c580616c639e5956abcdfc216f5d941ef5fd5121df7ed220205cfe1a463ba9622dd22cb694a77851b15e45b36c7954d9d3604e375a1c7cfbad6c64149dfb138ddabd491b6d23a72e4311e69ac1dbd29644e9c32e14ad2bcdb7b06575e04c88771cc10e0f244f933151c55d1b597bdb39fff6265297d47e05efd21a5081225d95ae1276a2ef50dbba20d87ac390a99c50" timestamp="1771582537" url="https://gnejuszpompejusz.github.io/tomos-mirror/repo" version="20002">
+		<description>Repozytorium aplikacji Tomos</description>
+	</repo>
+	<application id="dev.gnejusz.tomos">
+		<id>dev.gnejusz.tomos</id>
+		<added>2026-02-20</added>
+		<lastupdated>2026-02-20</lastupdated>
+		<name>Tomos</name>
+		<summary>Nieoficjalny hobbysticzny klient Librus Synergia</summary>
+		<desc>&lt;p&gt;
+Tomos is an unofficial client for the Polish Librus Synergia platform, created to bring clarity to grades, messages, attendance and school information. Inspired by the student-focused project librusek, Tomos extends its functionality to parents as well, offering a clear and accessible view into the daily school environment. It is built on top of the Synergic library and developed using Flutter.
+&lt;/p&gt;
+
+&lt;p&gt;
+Tomos is not affiliated with the Librus company. It is a work in progress and may contain bugs, but continues to evolve with each release.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;Features:&lt;/b&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;Unified Synergic Feed&lt;/b&gt;: Recent grades, messages, absences and teacher substitutions in one place.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Attendance Overview&lt;/b&gt;: Detailed attendance records with percentage calculations for each subject.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Grades&lt;/b&gt;: A clear and structured view of academic results.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;School Trips&lt;/b&gt;: Information about upcoming school trips and excursions.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Messaging&lt;/b&gt;: Fetching message snippets and full message details from the Synergic API.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;User Management&lt;/b&gt;: Support for multiple accounts, each with a custom avatar.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Auto‑Login&lt;/b&gt;: Quick access without re-entering credentials.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Cross‑Platform Foundation&lt;/b&gt;: Built with Flutter; tested on Android and Windows. Web version possible with proper CORS configuration.&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;State Management&lt;/b&gt;: Powered by Riverpod for predictable and stable behavior.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+Tomos is developed as a single‑author project and combines both experimental and enterprise‑grade architectural elements. The UI is actively evolving and may vary between screens as part of ongoing design exploration.
+&lt;/p&gt;
+</desc>
+		<license>MIT</license>
+		<categories>Education</categories>
+		<category>Education</category>
+		<web></web>
+		<source>https://gitlab.com/gnejusz_pompejusz/tomos</source>
+		<tracker>https://gitlab.com/gnejusz_pompejusz/tomos/-/issues</tracker>
+		<author>Gnejusz Pompejusz</author>
+		<marketversion></marketversion>
+		<marketvercode>1</marketvercode>
+		<package>
+			<version>0.2.0</version>
+			<versioncode>1</versioncode>
+			<apkname>dev.gnejusz.tomos_2.apk</apkname>
+			<hash type="sha256">07dfef34dae6821439ec4f953ae51e84be418c1149f4ed318f736b7cf56059bc</hash>
+			<size>65265447</size>
+			<sdkver>24</sdkver>
+			<targetSdkVersion>36</targetSdkVersion>
+			<added>2026-02-20</added>
+			<sig>ec8757acc578086121cf6c26fddd936d</sig>
+			<permissions>INTERNET,dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION</permissions>
+			<nativecode>arm64-v8a,armeabi-v7a,x86_64</nativecode>
+		</package>
+	</application>
+</fdroid>
