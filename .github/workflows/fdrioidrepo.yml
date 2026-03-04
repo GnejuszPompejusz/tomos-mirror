@@ -44,7 +44,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: ${{ env.FLUTTER_VERSION || 'stable' }}
+          flutter-version: '3.38.5'
+          channel: 'master'
+          #channel: ${{ env.FLUTTER_VERSION || 'stable' }}
           cache: true
 
       - name: Install fdroidserver
