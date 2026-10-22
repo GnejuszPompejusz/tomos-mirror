@@ -7,20 +7,20 @@ on:
   workflow_dispatch:
     inputs:
       versionName:
-        description: "App version name (np. 1.0.0)"
+        description: "App version name (np. 0.3.0)"
         required: true
       versionCode:
-        description: "Android versionCode (np. 10)"
+        description: "Android versionCode (np. 15)"
         required: true
       flutterVersion:
-        description: "Flutter version"
+        description: "Flutter channel / version"
         required: false
         default: "stable"
 
 jobs:
   fdroid:
     runs-on: ubuntu-latest
-    permissions:            
+    permissions:
       contents: write
       pages: write
       id-token: write
@@ -28,13 +28,15 @@ jobs:
       APPID: dev.gnejusz.tomos
       GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git"
       FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || 'stable' }}
+
     steps:
       - name: Checkout Hosting Repo (GitHub)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: false 
-          clean: true       
+          submodules: false
+          clean: true
+
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
@@ -44,76 +46,75 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.5'
-          channel: 'master'
-          #channel: ${{ env.FLUTTER_VERSION || 'stable' }}
+          channel: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Install fdroidserver
+      - name: Install fdroidserver & dependencies
         run: |
-          sudo apt update
-          sudo apt install -y fdroidserver libglu1-mesa python3-pip
-          pip3 install --upgrade fdroidserver
-      - name: Install latest androguard (fixes res1 must be zero error)
-        run: pip3 install --upgrade androguard
+          sudo apt-get update
+          sudo apt-get install -y fdroidserver libglu1-mesa python3-pip
+          # Flaga --break-system-packages wymagana na ubuntu-latest (PEP 668)
+          pip3 install --upgrade --break-system-packages androguard
 
       - name: Clone Source & Resolve Version
         id: version
         run: |
-          git clone --depth 1 ${{ env.GITLAB_URL }} source_code
+          BRANCH_OR_TAG=""
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_type }}" == "tag" ]]; then
+            BRANCH_OR_TAG="--branch ${{ github.ref_name }}"
+          fi
+
+          git clone --depth 1 $BRANCH_OR_TAG ${{ env.GITLAB_URL }} source_code
           cd source_code
           echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          
+
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "VERSION_NAME=${{ github.event.inputs.versionName }}" >> $GITHUB_ENV
             echo "VERSION_CODE=${{ github.event.inputs.versionCode }}" >> $GITHUB_ENV
           else
             TAG=${GITHUB_REF#refs/tags/}
             echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
-            # Eksportuj versionCode z pubspec.yaml lub użyj run_number
             VERSION_CODE=$(grep "version:" pubspec.yaml | head -1 | sed 's/.*+//' || echo "${{ github.run_number }}")
             echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
           fi
+
       - name: Setup Signing
         run: |
           cd source_code
-          
           cat > android/keystore.properties <<EOF
           KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
           KEY_ALIAS=fdroid
           KEYSTORE_PATH=../../release-key.p12
           EOF
 
-
           echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
-          
+
           keytool -list -v -keystore release-key.p12 \
-            -storepass ${{ secrets.FDROID_KEYSTORE_PASS }} -alias fdroid
-          # Debug 
-          echo "===== keystore.properties =====" 
-          cat android/keystore.properties
-          echo "===== files in source_code ====="
-          ls -l
+            -storepass "${{ secrets.FDROID_KEYSTORE_PASS }}" -alias fdroid
+
       - name: Build Release APK
         run: |
           cd source_code
           flutter pub get
-          flutter build apk --release 
+          # Wymagane przez migrację do Riverpod 3 (generowanie *.g.dart)
+          dart run build_runner build --delete-conflicting-outputs
+          flutter build apk --release
+
           mkdir -p $GITHUB_WORKSPACE/apks
           cp build/app/outputs/flutter-apk/app-release.apk $GITHUB_WORKSPACE/apks/${{ env.APPID }}_${{ env.VERSION_CODE }}.apk
 
       - name: Check APK signature
         run: |
           cd source_code
-          apksigner verify --print-certs build/app/outputs/flutter-apk/app-release.apk
+          # Dynamiczne odszukanie apksigner z Android SDK
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          "$BUILD_TOOLS_DIR/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-release.apk
 
       - name: Init F-Droid Structure
         run: |
           mkdir -p repo/icons metadata
-          # Tworzymy pustą ikonę, aby fdroid update nie wyrzucał ostrzeżenia
           touch repo/icons/icon.png
-          
-          # Tworzymy czysty config.yml z POPRAWNYMI nazwami kluczy
+
           cat > config.yml <<EOF
           keystore: "keystore.p12"
           keystorepass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
@@ -124,7 +125,6 @@ jobs:
           repo_name: "Tomos Mirror"
           repo_description: "Repozytorium aplikacji Tomos"
           EOF
-          # F-Droid wymaga restrykcyjnych uprawnień dla plików z hasłami
           chmod 600 config.yml
 
       - name: Setup Repo Signing Key
@@ -133,37 +133,32 @@ jobs:
       - name: Update Metadata
         run: |
           APP_DIR="metadata/${{ env.APPID }}"
-          # Tworzymy strukturę Fastlane
           mkdir -p $APP_DIR/en-US/images
-          
-          # 1. Kopiujemy plik główny .yml
+
+          # 1. Kopiowanie szablonu metadata
           cp fdroid/metadata/${{ env.APPID }}.yml metadata/${{ env.APPID }}.yml
-          
-          # 2. Czyścimy opis w .yml, żeby nie gryzł się z Fastlane (opcjonalne, ale zalecane)
-          # F-Droid priorytetyzuje pliki .txt nad polem Description w .yml
-          
-          # 3. Kopiujemy grafikę i ikonę (WAŻNE: ikona musi być PNG)
+
+          # 2. Ikona aplikacji do metadanych Fastlane
           cp source_code/assets/icons/icon.png $APP_DIR/en-US/images/icon.png
-          
-          # 4. Kopiujemy ikonę do głównego folderu repozytorium (dla starych klientów)
+
+          # 3. Ikona repozytorium (starsze wersje klienta F-Droid)
           mkdir -p repo/icons-160
           cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
-          
-          # 5. Tworzymy pliki tekstowe dla opisu (Fastlane style)
-          # Jeśli masz je w folderze fdroid/metadata w repo, po prostu je skopiuj:
+
+          # 4. Dodatkowe pliki opisów Fastlane (jeśli istnieją)
           if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
             cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
           fi
 
-          # 6. Aktualizacja wersji w .yml (sed)
+          # 5. Aktualizacja wersji w deskryptorze .yml
           sed -i "s/CurrentVersion:.*/CurrentVersion: ${{ env.VERSION_NAME }}/" metadata/${{ env.APPID }}.yml
           sed -i "s/CurrentVersionCode:.*/CurrentVersionCode: ${{ env.VERSION_CODE }}/" metadata/${{ env.APPID }}.yml
+
       - name: Update F-Droid Index
         env:
           FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
         run: |
           cp apks/*.apk repo/
-          # fdroid update automatycznie użyje config.yml i podpisze repozytorium
           fdroid update --pretty --verbose
 
       - name: Deploy to GitHub Pages
@@ -173,5 +168,4 @@ jobs:
           publish_dir: ./repo
           destination_dir: repo
           keep_files: false
-          force_orphan: true        
-          
+          force_orphan: true

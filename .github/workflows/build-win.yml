@@ -9,32 +9,36 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-         flutter-version: '3.38.5'
-         channel: 'stable'
+          channel: 'stable'
+          cache: true
 
       - name: Clone repo from GitLab
-        run: git clone https://gitlab.com/gnejusz_pompejusz/tomos.git
+        run: git clone --depth 1 https://gitlab.com/gnejusz_pompejusz/tomos.git tomos
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: tomos
+
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
         working-directory: tomos
 
       - name: Build Windows Release
         run: flutter build windows --release --verbose
         working-directory: tomos
 
-      - name: Zobacz co zostało zbudowane (debug)
-        run: Get-ChildItem -Recurse tomos/build/
+      - name: Archive Release
+        run: Compress-Archive -Path tomos/build/windows/x64/runner/Release/* -DestinationPath tomos-windows-release.zip
         shell: pwsh
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: tomos-windows
-          path: tomos\build\windows\x64\runner\Release\*
+          path: tomos-windows-release.zip
