@@ -113,13 +113,9 @@ jobs:
 
       - name: Init F-Droid Structure
         run: |
-          mkdir -p repo/icons metadata
-          
-          if [ -f source_code/assets/icons/icon.png ]; then
-            cp source_code/assets/icons/icon.png repo/icons/icon.png
-          else
-            touch repo/icons/icon.png
-          fi
+          mkdir -p repo metadata
+          # Zapisujemy ikonę poza repo/icons/, aby F-Droid mógł ją sam skopiować
+          cp source_code/assets/icons/icon.png repo-icon.png
 
           cat > config.yml <<EOF
           keystore: "keystore.p12"
@@ -127,7 +123,7 @@ jobs:
           keypass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
           keyalias: "fdroid"
           repo_keyalias: "fdroid"
-          repo_icon: "repo/icons/icon.png"
+          repo_icon: "repo-icon.png"
           repo_url: "https://gnejuszpompejusz.github.io/tomos-mirror/repo"
           repo_name: "Tomos Mirror"
           repo_description: "Repozytorium aplikacji Tomos"
@@ -142,22 +138,18 @@ jobs:
           APP_DIR="metadata/${{ env.APPID }}"
           mkdir -p $APP_DIR/en-US/images
 
-          # 1. Kopiowanie pliku konfiguracyjnego aplikacji
+          # 1. Kopiowanie metadanych aplikacji
           cp fdroid/metadata/${{ env.APPID }}.yml metadata/${{ env.APPID }}.yml
 
           # 2. Ikona aplikacji do metadanych Fastlane
           cp source_code/assets/icons/icon.png $APP_DIR/en-US/images/icon.png
 
-          # 3. Ikona repozytorium dla starszych klientów F-Droid
-          mkdir -p repo/icons-160
-          cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
-
-          # 4. Kopiowanie tekstów Fastlane (jeśli istnieją w repozytorium)
+          # 3. Kopiowanie tekstów Fastlane (jeśli istnieją w repozytorium)
           if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
             cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
           fi
 
-          # 5. Aktualizacja numeru i kodu wersji
+          # 4. Aktualizacja numeru i kodu wersji
           sed -i "s/CurrentVersion:.*/CurrentVersion: ${{ env.VERSION_NAME }}/" metadata/${{ env.APPID }}.yml
           sed -i "s/CurrentVersionCode:.*/CurrentVersionCode: ${{ env.VERSION_CODE }}/" metadata/${{ env.APPID }}.yml
 
