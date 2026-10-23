@@ -49,12 +49,16 @@ jobs:
           channel: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Install fdroidserver & dependencies
+      - name: Add Android SDK build-tools to PATH
+        run: |
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "$BUILD_TOOLS_DIR" >> $GITHUB_PATH
+          echo "Using Android build-tools from: $BUILD_TOOLS_DIR"
+
+      - name: Install fdroidserver
         run: |
           sudo apt-get update
-          sudo apt-get install -y fdroidserver libglu1-mesa python3-pip
-          # Flaga --break-system-packages wymagana na ubuntu-latest (PEP 668)
-          pip3 install --upgrade --break-system-packages androguard
+          sudo apt-get install -y fdroidserver libglu1-mesa
 
       - name: Clone Source & Resolve Version
         id: version
@@ -96,7 +100,6 @@ jobs:
         run: |
           cd source_code
           flutter pub get
-          # Wymagane przez migrację do Riverpod 3 (generowanie *.g.dart)
           dart run build_runner build --delete-conflicting-outputs
           flutter build apk --release
 
@@ -106,14 +109,12 @@ jobs:
       - name: Check APK signature
         run: |
           cd source_code
-          # Dynamiczne odszukanie apksigner z Android SDK
-          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
-          "$BUILD_TOOLS_DIR/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-release.apk
+          apksigner verify --print-certs build/app/outputs/flutter-apk/app-release.apk
 
       - name: Init F-Droid Structure
         run: |
           mkdir -p repo/icons metadata
-          touch repo/icons/icon.png
+          cp source_code/assets/icons/icon.png repo/icons/icon.png
 
           cat > config.yml <<EOF
           keystore: "keystore.p12"
@@ -135,22 +136,22 @@ jobs:
           APP_DIR="metadata/${{ env.APPID }}"
           mkdir -p $APP_DIR/en-US/images
 
-          # 1. Kopiowanie szablonu metadata
+          # 1. Kopiowanie pliku konfiguracyjnego aplikacji
           cp fdroid/metadata/${{ env.APPID }}.yml metadata/${{ env.APPID }}.yml
 
           # 2. Ikona aplikacji do metadanych Fastlane
           cp source_code/assets/icons/icon.png $APP_DIR/en-US/images/icon.png
 
-          # 3. Ikona repozytorium (starsze wersje klienta F-Droid)
+          # 3. Ikona repozytorium dla starszych klientów F-Droid
           mkdir -p repo/icons-160
           cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
 
-          # 4. Dodatkowe pliki opisów Fastlane (jeśli istnieją)
+          # 4. Kopiowanie tekstów Fastlane (o ile istnieją w repozytorium)
           if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
             cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
           fi
 
-          # 5. Aktualizacja wersji w deskryptorze .yml
+          # 5. Aktualizacja numeru i kodu wersji
           sed -i "s/CurrentVersion:.*/CurrentVersion: ${{ env.VERSION_NAME }}/" metadata/${{ env.APPID }}.yml
           sed -i "s/CurrentVersionCode:.*/CurrentVersionCode: ${{ env.VERSION_CODE }}/" metadata/${{ env.APPID }}.yml
 
