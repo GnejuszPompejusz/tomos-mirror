@@ -55,10 +55,10 @@ jobs:
           echo "$BUILD_TOOLS_DIR" >> $GITHUB_PATH
           echo "Using Android build-tools from: $BUILD_TOOLS_DIR"
 
-      - name: Install fdroidserver
+      - name: Install fdroidserver via pipx
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fdroidserver libglu1-mesa
+          pipx install fdroidserver
+          sudo apt-get update && sudo apt-get install -y libglu1-mesa
 
       - name: Clone Source & Resolve Version
         id: version
@@ -114,7 +114,12 @@ jobs:
       - name: Init F-Droid Structure
         run: |
           mkdir -p repo/icons metadata
-          cp source_code/assets/icons/icon.png repo/icons/icon.png
+          
+          if [ -f source_code/assets/icons/icon.png ]; then
+            cp source_code/assets/icons/icon.png repo/icons/icon.png
+          else
+            touch repo/icons/icon.png
+          fi
 
           cat > config.yml <<EOF
           keystore: "keystore.p12"
@@ -122,6 +127,7 @@ jobs:
           keypass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
           keyalias: "fdroid"
           repo_keyalias: "fdroid"
+          repo_icon: "repo/icons/icon.png"
           repo_url: "https://gnejuszpompejusz.github.io/tomos-mirror/repo"
           repo_name: "Tomos Mirror"
           repo_description: "Repozytorium aplikacji Tomos"
@@ -146,7 +152,7 @@ jobs:
           mkdir -p repo/icons-160
           cp source_code/assets/icons/icon.png repo/icons-160/${{ env.APPID }}.png
 
-          # 4. Kopiowanie tekstów Fastlane (o ile istnieją w repozytorium)
+          # 4. Kopiowanie tekstów Fastlane (jeśli istnieją w repozytorium)
           if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
             cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
           fi
