@@ -7,15 +7,18 @@ on:
   workflow_dispatch:
     inputs:
       versionName:
-        description: "App version name (np. 0.3.0)"
+        description: "Nazwa wersji aplikacji (SemVer bez prefiksu 'v', np. 0.3.0 lub 1.2.4)"
         required: true
+        type: string
       versionCode:
-        description: "Android versionCode (np. 15)"
+        description: "Kod wersji Androida (liczba całkowita większa niż w poprzednim wydaniu, np. 15)"
         required: true
+        type: string
       flutterVersion:
-        description: "Flutter channel / version"
+        description: "Wersja lub kanał Fluttera: wpisz kanał ('stable', 'beta', 'master') LUB numer wersji (np. '3.24.5', '3.27.1', '3.24.x')"
         required: false
         default: "stable"
+        type: string
 
 jobs:
   fdroid:
@@ -27,7 +30,8 @@ jobs:
     env:
       APPID: dev.gnejusz.tomos
       GITLAB_URL: "https://gitlab.com/gnejusz_pompejusz/tomos.git"
-      FLUTTER_VERSION: ${{ github.event.inputs.flutterVersion || 'stable' }}
+      # Obsługuje zarówno nazwy kanałów ('stable', 'beta'), jak i numery wersji ('3.24.5', '3.24.x')
+      FLUTTER_VERSION: ${{ inputs.flutterVersion || 'stable' }}
 
     steps:
       - name: Checkout Hosting Repo (GitHub)
@@ -46,13 +50,13 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
       - name: Add Android SDK build-tools to PATH
         run: |
-          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
-          echo "$BUILD_TOOLS_DIR" >> $GITHUB_PATH
+          BUILD_TOOLS_DIR=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)
+          echo "$BUILD_TOOLS_DIR" >> "$GITHUB_PATH"
           echo "Using Android build-tools from: $BUILD_TOOLS_DIR"
 
       - name: Install fdroidserver via pipx
@@ -62,49 +66,69 @@ jobs:
 
       - name: Clone Source & Resolve Version
         id: version
+        env:
+          INPUT_VERSION_NAME: ${{ inputs.versionName }}
+          INPUT_VERSION_CODE: ${{ inputs.versionCode }}
         run: |
           BRANCH_OR_TAG=""
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_type }}" == "tag" ]]; then
             BRANCH_OR_TAG="--branch ${{ github.ref_name }}"
           fi
 
-          git clone --depth 1 $BRANCH_OR_TAG ${{ env.GITLAB_URL }} source_code
+          git clone --depth 1 $BRANCH_OR_TAG "$GITLAB_URL" source_code
           cd source_code
-          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "VERSION_NAME=${{ github.event.inputs.versionName }}" >> $GITHUB_ENV
-            echo "VERSION_CODE=${{ github.event.inputs.versionCode }}" >> $GITHUB_ENV
+            CLEAN_VERSION_NAME="${INPUT_VERSION_NAME#v}"
+            echo "VERSION_NAME=${CLEAN_VERSION_NAME}" >> "$GITHUB_ENV"
+            echo "VERSION_CODE=${INPUT_VERSION_CODE}" >> "$GITHUB_ENV"
           else
-            TAG=${GITHUB_REF#refs/tags/}
-            echo "VERSION_NAME=${TAG#v}" >> $GITHUB_ENV
-            VERSION_CODE=$(grep "version:" pubspec.yaml | head -1 | sed 's/.*+//' || echo "${{ github.run_number }}")
-            echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "VERSION_NAME=${TAG#v}" >> "$GITHUB_ENV"
+
+            RAW_VERSION=$(grep -E '^version:' pubspec.yaml | head -n 1 | awk '{print $2}')
+            if [[ "$RAW_VERSION" == *"+"* ]]; then
+              VERSION_CODE="${RAW_VERSION#*+}"
+            else
+              VERSION_CODE="${{ github.run_number }}"
+            fi
+            echo "VERSION_CODE=${VERSION_CODE}" >> "$GITHUB_ENV"
           fi
 
       - name: Setup Signing
+        env:
+          KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
+          KEYSTORE_B64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
         run: |
           cd source_code
-          cat > android/keystore.properties <<EOF
-          KEYSTORE_PASSWORD=${{ secrets.FDROID_KEYSTORE_PASS }}
-          KEY_ALIAS=fdroid
-          KEYSTORE_PATH=../../release-key.p12
-          EOF
+          echo "$KEYSTORE_B64" | base64 -d > release-key.p12
 
-          echo "${{ secrets.FDROID_KEYSTORE_BASE64 }}" | base64 -d > release-key.p12
+          printf '%s\n' \
+            "KEYSTORE_PASSWORD=${KEYSTORE_PASS}" \
+            "KEY_ALIAS=fdroid" \
+            "KEYSTORE_PATH=${GITHUB_WORKSPACE}/source_code/release-key.p12" \
+            > android/keystore.properties
 
           keytool -list -v -keystore release-key.p12 \
-            -storepass "${{ secrets.FDROID_KEYSTORE_PASS }}" -alias fdroid
+            -storepass "$KEYSTORE_PASS" -alias fdroid
 
       - name: Build Release APK
         run: |
           cd source_code
           flutter pub get
-          dart run build_runner build --delete-conflicting-outputs
-          flutter build apk --release
 
-          mkdir -p $GITHUB_WORKSPACE/apks
-          cp build/app/outputs/flutter-apk/app-release.apk $GITHUB_WORKSPACE/apks/${{ env.APPID }}_${{ env.VERSION_CODE }}.apk
+          if grep -q "build_runner" pubspec.yaml; then
+            dart run build_runner build --delete-conflicting-outputs
+          fi
+
+          flutter build apk --release \
+            --build-name="$VERSION_NAME" \
+            --build-number="$VERSION_CODE"
+
+          mkdir -p "$GITHUB_WORKSPACE/apks"
+          cp build/app/outputs/flutter-apk/app-release.apk \
+            "$GITHUB_WORKSPACE/apks/${APPID}_${VERSION_CODE}.apk"
 
       - name: Check APK signature
         run: |
@@ -112,22 +136,24 @@ jobs:
           apksigner verify --print-certs build/app/outputs/flutter-apk/app-release.apk
 
       - name: Init F-Droid Structure
+        env:
+          KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
         run: |
           mkdir -p repo metadata
-          # Zapisujemy ikonę poza repo/icons/, aby F-Droid mógł ją sam skopiować
+          # Ikona poza repo/icons/, aby F-Droid mógł ją samodzielnie przetworzyć
           cp source_code/assets/icons/icon.png repo-icon.png
 
-          cat > config.yml <<EOF
-          keystore: "keystore.p12"
-          keystorepass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
-          keypass: "${{ secrets.FDROID_KEYSTORE_PASS }}"
-          keyalias: "fdroid"
-          repo_keyalias: "fdroid"
-          repo_icon: "repo-icon.png"
-          repo_url: "https://gnejuszpompejusz.github.io/tomos-mirror/repo"
-          repo_name: "Tomos Mirror"
-          repo_description: "Repozytorium aplikacji Tomos"
-          EOF
+          printf '%s\n' \
+            'keystore: "keystore.p12"' \
+            "keystorepass: \"${KEYSTORE_PASS}\"" \
+            "keypass: \"${KEYSTORE_PASS}\"" \
+            'keyalias: "fdroid"' \
+            'repo_keyalias: "fdroid"' \
+            'repo_icon: "repo-icon.png"' \
+            'repo_url: "https://gnejuszpompejusz.github.io/tomos-mirror/repo"' \
+            'repo_name: "Tomos Mirror"' \
+            'repo_description: "Repozytorium aplikacji Tomos"' \
+            > config.yml
           chmod 600 config.yml
 
       - name: Setup Repo Signing Key
@@ -135,23 +161,24 @@ jobs:
 
       - name: Update Metadata
         run: |
-          APP_DIR="metadata/${{ env.APPID }}"
-          mkdir -p $APP_DIR/en-US/images
+          APP_DIR="metadata/${APPID}"
+          META_FILE="metadata/${APPID}.yml"
+          mkdir -p "$APP_DIR/en-US/images"
 
           # 1. Kopiowanie metadanych aplikacji
-          cp fdroid/metadata/${{ env.APPID }}.yml metadata/${{ env.APPID }}.yml
+          cp "fdroid/metadata/${APPID}.yml" "$META_FILE"
 
           # 2. Ikona aplikacji do metadanych Fastlane
-          cp source_code/assets/icons/icon.png $APP_DIR/en-US/images/icon.png
+          cp source_code/assets/icons/icon.png "$APP_DIR/en-US/images/icon.png"
 
           # 3. Kopiowanie tekstów Fastlane (jeśli istnieją w repozytorium)
-          if [ -d "fdroid/metadata/${{ env.APPID }}/en-US" ]; then
-            cp -r fdroid/metadata/${{ env.APPID }}/en-US/* $APP_DIR/en-US/
+          if [ -d "fdroid/metadata/${APPID}/en-US" ]; then
+            cp -r "fdroid/metadata/${APPID}/en-US/"* "$APP_DIR/en-US/"
           fi
 
           # 4. Aktualizacja numeru i kodu wersji
-          sed -i "s/CurrentVersion:.*/CurrentVersion: ${{ env.VERSION_NAME }}/" metadata/${{ env.APPID }}.yml
-          sed -i "s/CurrentVersionCode:.*/CurrentVersionCode: ${{ env.VERSION_CODE }}/" metadata/${{ env.APPID }}.yml
+          sed -i "s/^CurrentVersion:.*/CurrentVersion: ${VERSION_NAME}/" "$META_FILE"
+          sed -i "s/^CurrentVersionCode:.*/CurrentVersionCode: ${VERSION_CODE}/" "$META_FILE"
 
       - name: Update F-Droid Index
         env:
@@ -161,7 +188,7 @@ jobs:
           fdroid update --pretty --verbose
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./repo
