@@ -1,0 +1,80 @@
+{
+  "repo": {
+    "timestamp": 1795599140000,
+    "version": 20002,
+    "name": "Tomos Mirror",
+    "icon": "repo-icon.png",
+    "address": "https://gnejuszpompejusz.github.io/tomos-mirror/repo",
+    "description": "Repozytorium aplikacji Tomos"
+  },
+  "requests": {
+    "install": [],
+    "uninstall": []
+  },
+  "apps": [
+    {
+      "allowedAPKSigningKeys": [
+        "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee"
+      ],
+      "authorName": "Gnejusz Pompejusz",
+      "categories": [
+        "Education"
+      ],
+      "suggestedVersionCode": "3",
+      "issueTracker": "https://gitlab.com/gnejusz_pompejusz/tomos/-/issues",
+      "license": "MIT",
+      "sourceCode": "https://gitlab.com/gnejusz_pompejusz/tomos",
+      "added": 1795599139000,
+      "packageName": "dev.gnejusz.tomos",
+      "lastUpdated": 1795599139000,
+      "localized": {
+        "en-US": {
+          "description": "<p>\nTomos is an unofficial client for the Polish Librus Synergia platform, built with Flutter to bring clarity to grades, messages, attendance, homework, and school information for students and parents.\n</p>\n\n<p>\nTomos is not affiliated with Librus. It is actively developed and may contain bugs or visual differences between screens as features and design evolve.\n</p>\n\n<p><b>Features:</b></p>\n<ul>\n  <li><b>Unified Feed &amp; Calendar</b>: Weekly and daily schedule views, school events, holidays, teacher absences, and substitutions.</li>\n  <li><b>Grades</b>: View numeric and descriptive grades with weights, skills, categories, and subject grouping.</li>\n  <li><b>Attendance &amp; Justifications</b>: Attendance statistics with custom grouping rules and absence justifications.</li>\n  <li><b>Homework &amp; Trips</b>: Track assignments, upcoming school trips, and school year milestones.</li>\n  <li><b>Messaging</b>: Read, send, and organize messages with tags, drafts, and attachments.</li>\n  <li><b>Accounts, Security &amp; Theming</b>: Multiple user accounts, encrypted credential storage, auto-login, and customizable themes.</li>\n</ul>\n",
+          "icon": "icon_7R3BWaJMbpCUYLW6fIWBTmxN6ERb7sLka9LUNS0L7NY=.png",
+          "name": "Tomos",
+          "phoneScreenshots": [
+            "screenshot1.png",
+            "screenshot2.png",
+            "screenshot3.png",
+            "screenshot4.png",
+            "screenshot5.png"
+          ],
+          "summary": "Tomos is an unofficial client for the Polish Librus Synergia platform"
+        }
+      }
+    }
+  ],
+  "packages": {
+    "dev.gnejusz.tomos": [
+      {
+        "added": 1795599139000,
+        "apkName": "dev.gnejusz.tomos_3.apk",
+        "hash": "4428e7bb9a36954200d1fb498f7cf1641646b9398a6ff3285e94022b840db711",
+        "hashType": "sha256",
+        "minSdkVersion": 24,
+        "nativecode": [
+          "arm64-v8a",
+          "armeabi-v7a",
+          "x86_64"
+        ],
+        "packageName": "dev.gnejusz.tomos",
+        "sig": "ec8757acc578086121cf6c26fddd936d",
+        "signer": "1dcd14a7a1636623f211331784878a06d692f6747382aa79684668402c7094ee",
+        "size": 76995234,
+        "targetSdkVersion": 36,
+        "uses-permission": [
+          [
+            "android.permission.INTERNET",
+            null
+          ],
+          [
+            "dev.gnejusz.tomos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            null
+          ]
+        ],
+        "versionCode": 3,
+        "versionName": "0.3.1"
+      }
+    ]
+  }
+}
