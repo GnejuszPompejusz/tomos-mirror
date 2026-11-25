@@ -1,0 +1,4 @@
+- Dynamiczny zakres godzin kalendarza dopasowany do planu dnia szkoły.
+- Nowy ekran usprawiedliwień (/justifications) i ekran profilu ucznia (/studentInfo).
+- Szyfrowanie danych uwierzytelniania AES-GCM i bezpieczne czyszczenie pamięci.
+- Poprawki obsługi haseł, odświeżania stanu kont, dekodowania danych i przewijania kalendarza.

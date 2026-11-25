@@ -1,0 +1,4 @@
+- Dni wolne od zajęć w kalendarzu oraz obsługa cyklu roku szkolnego i kamieni milowych na pulpicie.
+- Ulepszenia wiadomości: etykiety, wersje robocze, odświeżanie w tle i obsługa błędów.
+- Dynamiczne wyznaczanie zakresów dat ocen na podstawie kalendarza szkolnego.
+- Poprawki wyświetlania nazw szkół/nauczycieli, stanu formularzy i synchronizacji widoków.

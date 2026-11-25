@@ -1,0 +1,6 @@
+- Weekly & daily calendar views, trips, teacher absences, and live current-time indicator.
+- New grades screen with statistics, weights, skills, and subject grouping.
+- Redesigned attendance stats dashboard and custom grouping rules.
+- Cache statistics and debugging screen.
+- Unified detail sheets, improved drawer menu, and calendar sources in settings.
+- Fixed calendar sync race conditions, weighted grade averages, and UI glitches.

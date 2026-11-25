@@ -1,0 +1,4 @@
+- School free days in calendar plus school year lifecycle and milestone cards on dashboard.
+- Messaging upgrades: tags, drafts, background refresh, and error/empty states.
+- Dynamic grade date ranges based on the school year calendar.
+- Fixed entity labels, form state syncing, and view lifecycle issues.

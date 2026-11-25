@@ -1,0 +1,6 @@
+- Ekran prac domowych oraz obsługa nakładających się i odwołanych lekcji na pulpicie.
+- Pełny plan roku szkolnego, adaptacyjny kalendarz/agenda i karty nadchodzących dni wolnych.
+- Przybliżanie gestem uszczypnięcia (pinch-to-zoom) w widokach kalendarza.
+- Nowy wybór źródła kolorów motywu (w tym dynamiczny i zależny od przedmiotu).
+- Ulepszenia usprawiedliwień, diagnostyki sesji i bezpieczeństwa (schemat v6).
+- Poprawki kolejności planu dnia, kalendarza oraz cyklu życia sesji.

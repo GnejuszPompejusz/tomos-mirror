@@ -1,0 +1,4 @@
+- New justifications and trips screens plus student photo and avatar compression support.
+- Material You dynamic colors, scheme variants, and transport/cache diagnostics.
+- Updated credential storage format and migrated to the newer data layer.
+- Fixed navigation redirects, logout teardown, timezone handling, and Android builds.

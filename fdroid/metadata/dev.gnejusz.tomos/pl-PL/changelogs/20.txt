@@ -1,0 +1,6 @@
+- Kalendarz tygodniowy i dzienny, wyjazdy, nieobecności nauczycieli oraz wskaźnik bieżącego czasu.
+- Nowy ekran ocen ze statystykami, wagami, umiejętnościami i grupowaniem po przedmiotach.
+- Przeprojektowane statystyki frekwencji i własne reguły grupowania.
+- Ekran statystyk pamięci podręcznej i debugowania.
+- Ujednolicone arkusze szczegółów, ulepszone menu boczne i sekcja źródeł kalendarza w ustawieniach.
+- Poprawki synchronizacji kalendarza, obliczania średnich ocen oraz płynności UI.

@@ -1,0 +1,6 @@
+- New homework screen plus concurrent and cancelled lesson indicators on dashboard.
+- Full school year plan, adaptive calendar/agenda view, and upcoming free days cards.
+- Pinch-to-zoom support in calendar views.
+- Theme seed color picker (including dynamic and subject-reactive modes).
+- Justifications improvements, session diagnostics, and security v6 updates.
+- Fixed daily plan ordering, calendar layout glitches, and session lifecycle issues.

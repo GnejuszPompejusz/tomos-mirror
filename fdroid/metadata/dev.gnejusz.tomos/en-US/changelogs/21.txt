@@ -1,0 +1,4 @@
+- Dynamic calendar hour range adapted to school schedule hours.
+- New justifications screen (/justifications) and student profile screen (/studentInfo).
+- AES-GCM credential encryption and memory wiping improvements.
+- Fixed password salting, account refresh timing, decryption handling, and calendar scrolling.

@@ -1,0 +1,4 @@
+- Project initialization and modular app structure.
+- Support for multiple user accounts.
+- Basic messaging (reading and sending).
+- User authentication and profile management foundations.

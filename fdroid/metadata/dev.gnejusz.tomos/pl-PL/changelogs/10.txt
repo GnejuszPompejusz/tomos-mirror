@@ -1,0 +1,4 @@
+- Inicjalizacja projektu i modułowa struktura aplikacji.
+- Obsługa wielu kont użytkowników.
+- Podstawowa obsługa wiadomości (odczyt i wysyłanie).
+- Fundamenty uwierzytelniania oraz zarządzania profilami.

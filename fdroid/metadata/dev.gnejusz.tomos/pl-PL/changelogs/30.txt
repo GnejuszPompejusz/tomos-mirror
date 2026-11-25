@@ -1,0 +1,4 @@
+- Nowe ekrany usprawiedliwień i wycieczek oraz obsługa zdjęcia ucznia i awatarów.
+- Motywy dynamiczne Material You, warianty kolorystyczne oraz diagnostyka połączeń i cache.
+- Zmiana formatu przechowywania danych uwierzytelniania oraz migracja do nowszej warstwy danych.
+- Poprawki nawigacji, wylogowania, stref czasowych i kompilacji na Androidzie.

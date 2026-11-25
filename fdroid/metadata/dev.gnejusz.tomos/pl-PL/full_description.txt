@@ -1,0 +1,17 @@
+<p>
+Tomos to nieoficjalny klient polskiej platformy Librus Synergia, stworzony we Flutterze, aby ułatwić uczniom i rodzicom dostęp do ocen, wiadomości, frekwencji, prac domowych oraz informacji szkolnych.
+</p>
+
+<p>
+Tomos nie jest powiązany z firmą Librus. Projekt jest aktywnie rozwijany i może zawierać błędy lub różnice w wyglądzie poszczególnych ekranów.
+</p>
+
+<p><b>Funkcje:</b></p>
+<ul>
+  <li><b>Pulpit i kalendarz</b>: Widoki tygodniowe i dzienne, wydarzenia szkolne, dni wolne, nieobecności nauczycieli oraz zastępstwa.</li>
+  <li><b>Oceny</b>: Przegląd ocen liczbowych i opisowych z wagami, umiejętnościami, kategoriami oraz grupowaniem według przedmiotów.</li>
+  <li><b>Frekwencja i usprawiedliwienia</b>: Statystyki frekwencji z własnymi regułami grupowania oraz obsługa usprawiedliwień.</li>
+  <li><b>Prace domowe i wycieczki</b>: Podgląd zadań domowych, planowanych wycieczek szkolnych oraz kamieni milowych roku szkolnego.</li>
+  <li><b>Wiadomości</b>: Odczyt, wysyłanie i porządkowanie wiadomości z etykietami, wersjami roboczymi oraz załącznikami.</li>
+  <li><b>Konta, bezpieczeństwo i motywy</b>: Obsługa wielu kont, szyfrowane przechowywanie danych logowania, automatyczne logowanie oraz wybór motywów.</li>
+</ul>

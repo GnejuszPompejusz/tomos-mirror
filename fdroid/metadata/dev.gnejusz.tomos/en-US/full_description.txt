@@ -1,24 +1,17 @@
 <p>
-Tomos is an unofficial client for the Polish Librus Synergia platform, created to bring clarity to grades, messages, attendance and school information. Inspired by the student-focused project librusek, Tomos extends its functionality to parents as well, offering a clear and accessible view into the daily school environment. It is built on top of the Synergic library and developed using Flutter.
+Tomos is an unofficial client for the Polish Librus Synergia platform, built with Flutter to bring clarity to grades, messages, attendance, homework, and school information for students and parents.
 </p>
 
 <p>
-Tomos is not affiliated with the Librus company. It is a work in progress and may contain bugs, but continues to evolve with each release.
+Tomos is not affiliated with Librus. It is actively developed and may contain bugs or visual differences between screens as features and design evolve.
 </p>
 
 <p><b>Features:</b></p>
 <ul>
-  <li><b>Unified Synergic Feed</b>: Recent grades, messages, absences and teacher substitutions in one place.</li>
-  <li><b>Attendance Overview</b>: Detailed attendance records with percentage calculations for each subject.</li>
-  <li><b>Grades</b>: A clear and structured view of academic results.</li>
-  <li><b>School Trips</b>: Information about upcoming school trips and excursions.</li>
-  <li><b>Messaging</b>: Fetching message snippets and full message details from the Synergic API.</li>
-  <li><b>User Management</b>: Support for multiple accounts, each with a custom avatar.</li>
-  <li><b>Auto‑Login</b>: Quick access without re-entering credentials.</li>
-  <li><b>Cross‑Platform Foundation</b>: Built with Flutter; tested on Android and Windows. Web version possible with proper CORS configuration.</li>
-  <li><b>State Management</b>: Powered by Riverpod for predictable and stable behavior.</li>
+  <li><b>Unified Feed &amp; Calendar</b>: Weekly and daily schedule views, school events, holidays, teacher absences, and substitutions.</li>
+  <li><b>Grades</b>: View numeric and descriptive grades with weights, skills, categories, and subject grouping.</li>
+  <li><b>Attendance &amp; Justifications</b>: Attendance statistics with custom grouping rules and absence justifications.</li>
+  <li><b>Homework &amp; Trips</b>: Track assignments, upcoming school trips, and school year milestones.</li>
+  <li><b>Messaging</b>: Read, send, and organize messages with tags, drafts, and attachments.</li>
+  <li><b>Accounts, Security &amp; Theming</b>: Multiple user accounts, encrypted credential storage, auto-login, and customizable themes.</li>
 </ul>
-
-<p>
-Tomos is developed as a single‑author project and combines both experimental and enterprise‑grade architectural elements. The UI is actively evolving and may vary between screens as part of ongoing design exploration.
-</p>
